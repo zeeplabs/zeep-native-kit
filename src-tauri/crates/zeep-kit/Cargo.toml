@@ -1,0 +1,13 @@
+[package]
+name = "zeep-kit"
+description = "Umbrella crate for zeep-native-kit — Builder API for Tauri apps"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+zeep-core.workspace = true
+tauri.workspace = true

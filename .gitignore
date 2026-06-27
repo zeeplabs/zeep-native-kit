@@ -1,0 +1,37 @@
+# Node
+node_modules/
+dist/
+.cache/
+
+# pnpm
+.pnpm-store/
+
+# TypeScript
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Rust / Cargo
+target/
+src-tauri/target/
+Cargo.lock
+
+# Tauri
+src-tauri/gen/
+WixTools/
+
+# macOS
+.DS_Store
+*.xcuserstate
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test
+coverage/

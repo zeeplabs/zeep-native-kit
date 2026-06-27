@@ -1,0 +1,24 @@
+[package]
+name = "zeep-core"
+description = "Core Rust commands for zeep-native-kit: PrefsStore, Keychain, ShellRunner"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[features]
+default = ["prefs", "keychain", "shell"]
+prefs = ["dep:serde", "dep:serde_json", "dep:tokio"]
+keychain = ["dep:keyring"]
+shell = ["dep:tokio"]
+
+[dependencies]
+serde = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+tokio = { workspace = true, optional = true }
+thiserror.workspace = true
+tauri.workspace = true
+
+keyring = { version = "3", optional = true }
