@@ -12,7 +12,7 @@ authors.workspace = true
 default = ["prefs", "keychain", "shell"]
 prefs = ["dep:serde", "dep:serde_json", "dep:tokio"]
 keychain = ["dep:keyring"]
-shell = ["dep:tokio"]
+shell = ["dep:tokio", "dep:serde"]
 
 [dependencies]
 serde = { workspace = true, optional = true }
