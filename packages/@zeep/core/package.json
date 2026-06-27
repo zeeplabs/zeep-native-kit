@@ -1,0 +1,19 @@
+{
+  "name": "@zeep/core",
+  "version": "0.1.0",
+  "description": "TypeScript bindings for zeep-core Tauri commands",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@tauri-apps/api": "^2"
+  },
+  "devDependencies": {
+    "@tauri-apps/api": "^2",
+    "typescript": "^5.4.0"
+  }
+}
