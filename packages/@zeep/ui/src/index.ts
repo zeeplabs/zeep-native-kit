@@ -4,3 +4,4 @@ export * from './provider/ZeepProvider.tsx';
 export * from './components/AnimatedBackground.tsx';
 export * from './components/GlassCard.tsx';
 export * from './components/ShimmerText.tsx';
+export * from './components/Button.tsx';
