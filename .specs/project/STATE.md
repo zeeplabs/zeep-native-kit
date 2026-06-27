@@ -43,10 +43,13 @@ _None yet._
 
 ## Todos (cross-session)
 
-- [ ] Validate Q01 (styling approach) before starting zeep-ui
-- [ ] Check Tauri v2 keychain plugin vs raw `keyring` crate integration
+- [x] Validate Q01 (styling approach) before starting zeep-ui → resolved D09 (CSS vars)
+- [x] Check Tauri v2 keychain plugin vs raw `keyring` crate integration → resolved D07 (`keyring` crate)
+- [ ] **NEXT: ZT-6** — Implement PrefsStore (PRF-01..PRF-10) in `src-tauri/crates/zeep-core/src/prefs.rs`
 - [ ] Review `tauri-plugin-updater` v2 API before writing zeep-updater spec
 - [ ] Research `tauri-plugin-log` to decide zeep-logger approach (wrap vs replace)
+- [ ] Resolve Q04: zeep-logger — `tauri-plugin-log` wrap vs custom rotation
+- [ ] Resolve Q05: AI streaming — `tokio::process` pipe vs `tauri-plugin-shell` stream API
 
 ---
 
@@ -64,7 +67,10 @@ _None yet._
 
 ## Lessons
 
-_No lessons recorded yet._
+| ID | Lesson | Date |
+|----|--------|------|
+| L01 | `tauri-build::build()` always requires `src-tauri/icons/icon.png` at compile time, even with `bundle.icon = []` in tauri.conf.json. `cargo check` fails with "failed to open icon icons/icon.png: No such file or directory". Fix: create a minimal valid PNG placeholder (1x1 pixel) in `icons/`. | 2026-06-26 |
+| L02 | `apps/demo/src-tauri/` must be a separate Cargo workspace from the main `src-tauri/` workspace. Reference library crates via path dependency: `zeep-core = { path = "../../../src-tauri/crates/zeep-core" }`. Cargo resolves each workspace's deps independently — no conflicts. | 2026-06-26 |
 
 ---
 
