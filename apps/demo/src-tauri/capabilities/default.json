@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schema.tauri.app/schema/v2/capabilities",
+  "identifier": "default",
+  "description": "Default permissions for zeep-demo",
+  "windows": ["main"],
+  "permissions": [
+    "core:default"
+  ]
+}
