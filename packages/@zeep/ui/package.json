@@ -10,6 +10,11 @@
   "scripts": {
     "type-check": "tsc --noEmit"
   },
+  "dependencies": {
+    "dompurify": "^3",
+    "highlight.js": "^11",
+    "marked": "^14"
+  },
   "peerDependencies": {
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19"
