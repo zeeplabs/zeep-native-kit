@@ -20,6 +20,9 @@ importers:
       '@tauri-apps/api':
         specifier: ^2
         version: 2.11.1
+      '@zeep/core':
+        specifier: workspace:*
+        version: link:../../packages/@zeep/core
       '@zeep/ui':
         specifier: workspace:*
         version: link:../../packages/@zeep/ui

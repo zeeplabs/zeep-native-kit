@@ -15,6 +15,7 @@ import {
   SearchHighlight,
 } from '@zeep/ui';
 import type { AccentTheme, Theme } from '@zeep/ui';
+import { prefsGet, prefsSet, keychainGet, keychainSet, shellWhich } from '@zeep/core';
 
 const ACCENT_THEMES: AccentTheme[] = ['violet', 'ocean', 'sunset', 'forest', 'graphite'];
 const THEMES: Theme[] = ['light', 'dark', 'system'];
@@ -95,6 +96,56 @@ function GalleryContent() {
   const { theme: resolvedTheme, accentTheme, setTheme, setAccentTheme } = useZeep();
   const toast = useToast();
   const [searchQuery, setSearchQuery] = useState('Zeep');
+  const [prefsValue, setPrefsValue] = useState('');
+  const [prefsResult, setPrefsResult] = useState<string | null>(null);
+  const [keychainValue, setKeychainValue] = useState('');
+  const [keychainResult, setKeychainResult] = useState<string | null>(null);
+  const [shellResult, setShellResult] = useState<string | null>(null);
+
+  async function handlePrefsSet() {
+    try {
+      await prefsSet('native-kit-demo', prefsValue);
+      setPrefsResult(`set ok: "${prefsValue}"`);
+    } catch (err) {
+      setPrefsResult(`error: ${String(err)}`);
+    }
+  }
+
+  async function handlePrefsGet() {
+    try {
+      const value = await prefsGet('native-kit-demo');
+      setPrefsResult(`get: ${JSON.stringify(value)}`);
+    } catch (err) {
+      setPrefsResult(`error: ${String(err)}`);
+    }
+  }
+
+  async function handleKeychainSet() {
+    try {
+      await keychainSet('native-kit-demo', keychainValue);
+      setKeychainResult(`set ok: "${keychainValue}"`);
+    } catch (err) {
+      setKeychainResult(`error: ${String(err)}`);
+    }
+  }
+
+  async function handleKeychainGet() {
+    try {
+      const value = await keychainGet('native-kit-demo');
+      setKeychainResult(`get: ${JSON.stringify(value)}`);
+    } catch (err) {
+      setKeychainResult(`error: ${String(err)}`);
+    }
+  }
+
+  async function handleShellWhich() {
+    try {
+      const path = await shellWhich('node');
+      setShellResult(`node: ${JSON.stringify(path)}`);
+    } catch (err) {
+      setShellResult(`error: ${String(err)}`);
+    }
+  }
 
   return (
     <div style={page}>
@@ -272,6 +323,80 @@ function GalleryContent() {
           <GlassCard padding="lg" radius="lg">
             <MarkdownRenderer content={SAMPLE_MD} searchQuery={searchQuery || undefined} />
           </GlassCard>
+        </div>
+
+        {/* ── Native Kit (zeep-kit:default capability) ── */}
+        <div style={section}>
+          <div style={sectionTitle}>Native Kit</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <div style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-text-muted)', marginBottom: '0.5rem' }}>
+                Prefs
+              </div>
+              <div style={row}>
+                <input
+                  type="text"
+                  value={prefsValue}
+                  onChange={e => { setPrefsValue(e.target.value); }}
+                  placeholder="value to store"
+                  style={{
+                    padding: '0.375rem 0.75rem',
+                    borderRadius: 'var(--zeep-radius-md)',
+                    border: '1px solid var(--zeep-border)',
+                    background: 'var(--zeep-surface)',
+                    color: 'var(--zeep-text)',
+                    fontSize: 'var(--zeep-font-sm)',
+                    outline: 'none',
+                  }}
+                />
+                <Button variant="secondary" size="sm" onClick={handlePrefsSet}>set</Button>
+                <Button variant="secondary" size="sm" onClick={handlePrefsGet}>get</Button>
+                {prefsResult !== null && (
+                  <span style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-text-muted)' }}>{prefsResult}</span>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <div style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-text-muted)', marginBottom: '0.5rem' }}>
+                Keychain
+              </div>
+              <div style={row}>
+                <input
+                  type="text"
+                  value={keychainValue}
+                  onChange={e => { setKeychainValue(e.target.value); }}
+                  placeholder="secret to store"
+                  style={{
+                    padding: '0.375rem 0.75rem',
+                    borderRadius: 'var(--zeep-radius-md)',
+                    border: '1px solid var(--zeep-border)',
+                    background: 'var(--zeep-surface)',
+                    color: 'var(--zeep-text)',
+                    fontSize: 'var(--zeep-font-sm)',
+                    outline: 'none',
+                  }}
+                />
+                <Button variant="secondary" size="sm" onClick={handleKeychainSet}>set</Button>
+                <Button variant="secondary" size="sm" onClick={handleKeychainGet}>get</Button>
+                {keychainResult !== null && (
+                  <span style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-text-muted)' }}>{keychainResult}</span>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <div style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-text-muted)', marginBottom: '0.5rem' }}>
+                Shell
+              </div>
+              <div style={row}>
+                <Button variant="secondary" size="sm" onClick={handleShellWhich}>which node</Button>
+                {shellResult !== null && (
+                  <span style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-text-muted)' }}>{shellResult}</span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
