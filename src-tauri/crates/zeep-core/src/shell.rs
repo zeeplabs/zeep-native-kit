@@ -135,8 +135,8 @@ pub async fn shell_run(
 /// Streams stdout/stderr as Tauri events `shell:stdout` / `shell:stderr` (SHL-05).
 /// No timeout — fires until process exits (SHL-06).
 #[tauri::command]
-pub async fn shell_run_stream(
-    app: tauri::AppHandle,
+pub async fn shell_run_stream<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
     state: tauri::State<'_, ShellState>,
     program: String,
     args: Vec<String>,
