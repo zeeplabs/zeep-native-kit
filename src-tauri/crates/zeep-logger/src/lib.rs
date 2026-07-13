@@ -1,6 +1,9 @@
 use std::fmt::Arguments;
+use std::io;
+use std::path::Path;
+use std::time::{Duration, SystemTime};
 use tauri::plugin::TauriPlugin;
-use tauri::Runtime;
+use tauri::{AppHandle, Manager, Runtime};
 use tauri_plugin_log::fern::FormatCallback;
 use tauri_plugin_log::{RotationStrategy, Target, TargetKind};
 
@@ -82,6 +85,24 @@ impl Default for Builder {
     }
 }
 
+fn remove_stale_files(dir: &Path, days: u64) -> io::Result<()> {
+    let cutoff = SystemTime::now() - Duration::from_secs(days * 86_400);
+
+    for entry in std::fs::read_dir(dir)? {
+        let entry = entry?;
+        let metadata = entry.metadata()?;
+        if metadata.is_file() && metadata.modified()? < cutoff {
+            std::fs::remove_file(entry.path())?;
+        }
+    }
+    Ok(())
+}
+
+pub fn cleanup_old_logs<R: Runtime>(app: &AppHandle<R>, days: u64) -> io::Result<()> {
+    let log_dir = app.path().app_log_dir().map_err(io::Error::other)?;
+    remove_stale_files(&log_dir, days)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -109,5 +130,25 @@ mod tests {
         assert_eq!(parsed["target"], "zeep_logger::tests");
         assert_eq!(parsed["message"], "hello world");
         assert!(parsed["timestamp"].is_string());
+    }
+
+    #[test]
+    fn cleanup_removes_files_older_than_cutoff_and_keeps_newer_ones() {
+        use std::time::{Duration, SystemTime};
+
+        let dir = tempfile::tempdir().expect("tempdir");
+        let old_file = dir.path().join("old.log");
+        let new_file = dir.path().join("new.log");
+        std::fs::write(&old_file, "old").unwrap();
+        std::fs::write(&new_file, "new").unwrap();
+
+        let ten_days_ago = SystemTime::now() - Duration::from_secs(10 * 86_400);
+        let old_time = filetime::FileTime::from_system_time(ten_days_ago);
+        filetime::set_file_mtime(&old_file, old_time).unwrap();
+
+        remove_stale_files(dir.path(), 5).unwrap();
+
+        assert!(!old_file.exists());
+        assert!(new_file.exists());
     }
 }
