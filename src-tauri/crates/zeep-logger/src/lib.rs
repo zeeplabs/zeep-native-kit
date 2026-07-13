@@ -1,6 +1,27 @@
+use std::fmt::Arguments;
 use tauri::plugin::TauriPlugin;
 use tauri::Runtime;
+use tauri_plugin_log::fern::FormatCallback;
 use tauri_plugin_log::{RotationStrategy, Target, TargetKind};
+
+fn build_json_line(level: log::Level, target: &str, message: &Arguments<'_>) -> String {
+    let timestamp = time::OffsetDateTime::now_utc()
+        .format(&time::format_description::well_known::Rfc3339)
+        .unwrap_or_default();
+
+    serde_json::json!({
+        "timestamp": timestamp,
+        "level": level.to_string(),
+        "target": target,
+        "message": message.to_string(),
+    })
+    .to_string()
+}
+
+fn json_line_formatter(out: FormatCallback<'_>, message: &Arguments<'_>, record: &log::Record<'_>) {
+    let line = build_json_line(record.level(), record.target(), message);
+    out.finish(format_args!("{line}"));
+}
 
 pub struct Builder {
     inner: tauri_plugin_log::Builder,
@@ -9,7 +30,7 @@ pub struct Builder {
 impl Builder {
     pub fn new() -> Self {
         Self {
-            inner: tauri_plugin_log::Builder::new(),
+            inner: tauri_plugin_log::Builder::new().format(json_line_formatter),
         }
     }
 
@@ -76,5 +97,17 @@ mod tests {
     fn production_preset_builds_a_plugin() {
         let plugin = Builder::production().build::<tauri::test::MockRuntime>();
         assert_eq!(plugin.name(), "log");
+    }
+
+    #[test]
+    fn json_formatter_produces_valid_json_with_expected_fields() {
+        let message = format_args!("hello world");
+        let line = build_json_line(log::Level::Info, "zeep_logger::tests", &message);
+
+        let parsed: serde_json::Value = serde_json::from_str(&line).expect("valid json line");
+        assert_eq!(parsed["level"], "INFO");
+        assert_eq!(parsed["target"], "zeep_logger::tests");
+        assert_eq!(parsed["message"], "hello world");
+        assert!(parsed["timestamp"].is_string());
     }
 }
