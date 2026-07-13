@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-prefs-get-all"
+description = "Enables the prefs_get_all command without any pre-configured scope."
+commands.allow = ["prefs_get_all"]
+
+[[permission]]
+identifier = "deny-prefs-get-all"
+description = "Denies the prefs_get_all command without any pre-configured scope."
+commands.deny = ["prefs_get_all"]

@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-shell-run"
+description = "Enables the shell_run command without any pre-configured scope."
+commands.allow = ["shell_run"]
+
+[[permission]]
+identifier = "deny-shell-run"
+description = "Denies the shell_run command without any pre-configured scope."
+commands.deny = ["shell_run"]
