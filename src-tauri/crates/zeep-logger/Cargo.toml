@@ -1,0 +1,20 @@
+[package]
+name = "zeep-logger"
+description = "Structured logging for zeep-native-kit Tauri apps — wraps tauri-plugin-log"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+tauri.workspace = true
+tauri-plugin-log = "2"
+log = "0.4"
+serde_json.workspace = true
+time = { version = "0.3", features = ["formatting"] }
+
+[dev-dependencies]
+tauri = { workspace = true, features = ["test"] }
+tempfile = "3"
