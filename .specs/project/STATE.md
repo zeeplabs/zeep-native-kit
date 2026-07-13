@@ -22,6 +22,7 @@ _Persistent memory across sessions: decisions, blockers, lessons, todos, deferre
 | D12 | zeep-kit usa `tauri::plugin::Plugin` internamente + API fluente própria (`zeep_kit::Builder`) | Tauri v2 exige capabilities declaradas por plugin; sem isso comandos bloqueados em produção. Plugin pattern declara permissions automaticamente, eliminando configuração manual pelo consumidor | 2026-06-26 |
 | D13 | zeep-kit Builder derives keychain service as `dev.zeep.{namespace}`, registers prefs+keychain+shell together (no per-module opt-in) | Simplest correct implementation of D12; per-module opt-in deferred until zeep-logger/zeep-ai exist (YAGNI) | 2026-07-13 |
 | D14 | zeep-logger wraps `tauri-plugin-log` (2.8.0) instead of custom file rotation; registered as its own separate `.plugin()` call, not merged into zeep-kit's plugin | `tauri_plugin_log::Builder::build()` already returns a closed `TauriPlugin<R>` — can't nest one plugin inside another's setup/invoke_handler. Resolves Q04 | 2026-07-13 |
+| D15 | zeep-ai's `AIRunner::run_stream` (RUN-02) extends `zeep-core::ShellRunner`'s existing `shell_run_stream` (raw `tokio::process`, already in `shell.rs:137-194`) instead of adopting `tauri-plugin-shell`'s Command API | `tauri-plugin-shell` requires each binary pre-declared in capabilities JSON (no dynamic/wildcard path), which conflicts with DET-01's runtime CLI detection; its stdout events are byte chunks anyway (no line-buffering advantage); `shell_run_stream` already solves per-line emit + D08 PATH resolution. Resolves Q05. **Open validation before RUN-07 implementation:** neither `tokio::process::Child::kill()` nor `tauri-plugin-shell`'s equivalent documents process-group kill — if `claude`/`codex`/`ollama` spawn subprocesses, direct-PID kill may orphan them; needs `setsid`/`libc::killpg` check before cancellation ships | 2026-07-13 |
 
 ---
 
@@ -33,7 +34,7 @@ _Persistent memory across sessions: decisions, blockers, lessons, todos, deferre
 | Q02 | Should zeep-ui ship as a Vite plugin (injects CSS vars) or pure component lib? | Julio | **resolved → D10** |
 | Q03 | Storybook for component dev or use the demo Tauri app directly? | Julio | **resolved → D11** |
 | Q04 | zeep-logger: write to Tauri log plugin or custom file rotation? | Julio | **resolved → D14** |
-| Q05 | AI streaming: spawn process + pipe stdout line-by-line or use `tauri-plugin-shell` stream API? | Julio | open |
+| Q05 | AI streaming: spawn process + pipe stdout line-by-line or use `tauri-plugin-shell` stream API? | Julio | **resolved → D15** |
 
 ---
 
@@ -54,7 +55,9 @@ _None yet._
 - [x] **zeep-logger** — new crate wrapping `tauri-plugin-log` (D14, resolves Q04). `zeep_logger::Builder` (dev/production presets), JSON-per-line formatter, `cleanup_old_logs` retention util. 5 Rust tests. Merged to `main` (`f6e063a..3233483`). No log viewer UI yet (deferred).
 - [x] **zeep-logger demo wiring** — `apps/demo/src-tauri/src/lib.rs` registers `.plugin(zeep_logger::Builder::development().build())` + calls `cleanup_old_logs(app.handle(), 14)` in `.setup()`. `cargo check` clean; no capability declaration needed (plugin exposes no frontend-invokable commands).
 - [x] Review `tauri-plugin-updater` v2 API before writing zeep-updater spec — confirmed against docs.rs 2.10.1: `UpdaterExt` trait adds `.updater() -> Result<Updater>` / `.updater_builder() -> UpdaterBuilder` to `App`/`AppHandle`/`WebviewWindow`/etc; `handle.updater()?.check().await` returns update info; `Builder` (registered via `.plugin()`) configures endpoints/pubkey/target/headers/version-comparator. Rust-callable, not just JS commands.
-- [ ] Resolve Q05: AI streaming — `tokio::process` pipe vs `tauri-plugin-shell` stream API
+- [x] **zeep-updater** — new crate wrapping `tauri-plugin-updater` (2.10.1). `zeep_updater::Builder` (`new`/`pubkey`/`target`/`build`), hardcoded semver gate `is_stable_and_newer` (stable-only, strictly newer than current) via `default_version_comparator`. `build<R: Runtime>() -> TauriPlugin<R, Config>` (two type params, unlike zeep-kit/zeep-logger's single-param form — API-mandated). 4 Rust tests. Merged to `main` (`65c65ad..865f8f7`). No demo wiring yet (deferred, same pattern as zeep-logger); no UpdateBanner UI.
+- [ ] **zeep-updater demo wiring** — register `.plugin(zeep_updater::Builder::new()....build())` in `apps/demo/src-tauri/src/lib.rs`. Must call `.pubkey()` with a real signing key — the semver gate is an eligibility policy, not the trust boundary; without a pubkey, updates apply unsigned.
+- [x] Resolve Q05 → D15: extend `zeep-core::ShellRunner::shell_run_stream` for `zeep-ai`'s RUN-02, not `tauri-plugin-shell`
 
 ---
 
