@@ -124,7 +124,7 @@ impl Default for Builder {
 }
 ```
 
-(Exact `tauri_plugin_log` v2 type/method names — `Target`, `TargetKind`, `RotationStrategy`, `.format()`, `.max_file_size()`, `.rotation_strategy()` — must be confirmed against the crate's actual published API during implementation; the plan's first task includes verifying these against `cargo doc`/docs.rs before writing the wrapper, since the design phase worked from research summary, not the crate's source.)
+(Confirmed against `tauri-plugin-log` 2.8.0 docs.rs: `Target::new(kind: TargetKind) -> Self`; `TargetKind::LogDir { file_name: Option<String> }` and `TargetKind::Stdout`/`Webview` unit variants; `RotationStrategy::{KeepAll, KeepOne, KeepSome(usize)}` — no `Default` variant, this design uses `KeepAll` throughout; `Builder::format<F>(self, formatter: F) where F: Fn(FormatCallback<'_>, &Arguments<'_>, &Record<'_>) + Sync + Send + 'static`.)
 
 ### JSON-per-line formatter
 
