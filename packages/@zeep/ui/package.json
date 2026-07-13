@@ -8,7 +8,8 @@
     "./tokens": "./src/tokens/index.ts"
   },
   "scripts": {
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "dompurify": "^3",
@@ -20,10 +21,15 @@
     "react-dom": "^18 || ^19"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
+    "@testing-library/user-event": "^14",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "jsdom": "^25",
     "react": "^19",
     "react-dom": "^19",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^2"
   }
 }
