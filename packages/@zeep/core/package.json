@@ -7,13 +7,15 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
   },
   "peerDependencies": {
     "@tauri-apps/api": "^2"
   },
   "devDependencies": {
     "@tauri-apps/api": "^2",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^2"
   }
 }
