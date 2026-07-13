@@ -11,3 +11,9 @@ authors.workspace = true
 [dependencies]
 zeep-core.workspace = true
 tauri.workspace = true
+
+[build-dependencies]
+tauri-plugin = { workspace = true }
+
+[dev-dependencies]
+tauri = { workspace = true, features = ["test"] }
