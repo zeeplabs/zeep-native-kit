@@ -20,3 +20,22 @@ impl Default for Builder {
         Self::new()
     }
 }
+
+fn resolve_keychain_service(namespace: &str) -> String {
+    format!("dev.zeep.{namespace}")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn derives_service_from_namespace() {
+        assert_eq!(resolve_keychain_service("zeep-demo"), "dev.zeep.zeep-demo");
+    }
+
+    #[test]
+    fn derives_service_from_custom_namespace() {
+        assert_eq!(resolve_keychain_service("acme-app"), "dev.zeep.acme-app");
+    }
+}
