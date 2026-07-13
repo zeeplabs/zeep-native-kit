@@ -1,0 +1,17 @@
+[package]
+name = "zeep-updater"
+description = "Auto-update integration for zeep-native-kit Tauri apps — wraps tauri-plugin-updater with a semver gate"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+tauri.workspace = true
+tauri-plugin-updater = "2"
+semver = "1"
+
+[dev-dependencies]
+tauri = { workspace = true, features = ["test"] }
