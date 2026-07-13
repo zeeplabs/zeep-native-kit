@@ -45,7 +45,10 @@ _None yet._
 
 - [x] Validate Q01 (styling approach) before starting zeep-ui → resolved D09 (CSS vars)
 - [x] Check Tauri v2 keychain plugin vs raw `keyring` crate integration → resolved D07 (`keyring` crate)
-- [ ] **NEXT: ZT-6** — Implement PrefsStore (PRF-01..PRF-10) in `src-tauri/crates/zeep-core/src/prefs.rs`
+- [x] **ZT-6** — Implement PrefsStore (PRF-01..PRF-10) in `src-tauri/crates/zeep-core/src/prefs.rs` — done, 19 Rust tests passing across prefs/keychain/shell
+- [ ] **NEXT: zeep-kit Builder** — `Builder::namespace()` exists but no `.build()` / `tauri::plugin::Plugin` wiring yet (D12 not yet implemented in code)
+- [ ] Set up JS/TS test runner — no `test` script in `@zeep/ui` or `@zeep/core`, Vitest not installed despite PROJECT.md listing it as stack. Zero JS/TS test coverage today.
+- [ ] Add unit tests to `zeep-kit` — currently 0 tests
 - [ ] Review `tauri-plugin-updater` v2 API before writing zeep-updater spec
 - [ ] Research `tauri-plugin-log` to decide zeep-logger approach (wrap vs replace)
 - [ ] Resolve Q04: zeep-logger — `tauri-plugin-log` wrap vs custom rotation
@@ -71,6 +74,7 @@ _None yet._
 |----|--------|------|
 | L01 | `tauri-build::build()` always requires `src-tauri/icons/icon.png` at compile time, even with `bundle.icon = []` in tauri.conf.json. `cargo check` fails with "failed to open icon icons/icon.png: No such file or directory". Fix: create a minimal valid PNG placeholder (1x1 pixel) in `icons/`. | 2026-06-26 |
 | L02 | `apps/demo/src-tauri/` must be a separate Cargo workspace from the main `src-tauri/` workspace. Reference library crates via path dependency: `zeep-core = { path = "../../../src-tauri/crates/zeep-core" }`. Cargo resolves each workspace's deps independently — no conflicts. | 2026-06-26 |
+| L03 | `pnpm -r test` runs 0 tests silently (exit 0) because `@zeep/ui` and `@zeep/core` have no `test` script and Vitest isn't installed — despite PROJECT.md listing Vitest + Testing Library as the UI test stack. `cargo test --workspace` is real: 19 passing tests in zeep-core (prefs/keychain/shell), 0 in zeep-kit. JS/TS coverage is 0%. | 2026-07-13 |
 
 ---
 
