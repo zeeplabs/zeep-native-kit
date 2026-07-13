@@ -20,6 +20,7 @@ _Persistent memory across sessions: decisions, blockers, lessons, todos, deferre
 | D10 | zeep-ui ships as pure component lib (no Vite plugin) | Simpler DX; ZeepProvider injects tokens at React mount time | 2026-06-26 |
 | D11 | Component dev in demo Tauri app (`apps/demo/`) | Tests real Tauri integration; no extra tooling; UIGallery page covers all components | 2026-06-26 |
 | D12 | zeep-kit usa `tauri::plugin::Plugin` internamente + API fluente própria (`zeep_kit::Builder`) | Tauri v2 exige capabilities declaradas por plugin; sem isso comandos bloqueados em produção. Plugin pattern declara permissions automaticamente, eliminando configuração manual pelo consumidor | 2026-06-26 |
+| D13 | zeep-kit Builder derives keychain service as `dev.zeep.{namespace}`, registers prefs+keychain+shell together (no per-module opt-in) | Simplest correct implementation of D12; per-module opt-in deferred until zeep-logger/zeep-ai exist (YAGNI) | 2026-07-13 |
 
 ---
 
@@ -46,7 +47,9 @@ _None yet._
 - [x] Validate Q01 (styling approach) before starting zeep-ui → resolved D09 (CSS vars)
 - [x] Check Tauri v2 keychain plugin vs raw `keyring` crate integration → resolved D07 (`keyring` crate)
 - [x] **ZT-6** — Implement PrefsStore (PRF-01..PRF-10) in `src-tauri/crates/zeep-core/src/prefs.rs` — done, 19 Rust tests passing across prefs/keychain/shell
-- [ ] **NEXT: zeep-kit Builder** — `Builder::namespace()` exists but no `.build()` / `tauri::plugin::Plugin` wiring yet (D12 not yet implemented in code)
+- [x] **zeep-kit Builder** — `Builder::build()` now returns a real `tauri::plugin::TauriPlugin<R>` with declared `zeep-kit:default` permissions (D12 implemented); `apps/demo` migrated to `.plugin(zeep_kit::Builder::new().namespace(...).build())`. zeep-kit test count: 0 → 3.
+- [ ] **NEXT:** Add unit tests to remaining zeep-kit gaps as new modules land (zeep-logger/zeep-ai); JS/TS test runner setup still pending (tracked separately below)
+- [ ] Add frontend invoke() wiring in apps/demo/src/ for at least one zeep-kit command (prefs/keychain/shell) — currently the demo UI has zero invoke() calls, so there's no end-to-end proof the zeep-kit:default capability actually unblocks a command from JS. Found during zeep-kit Builder Task 7 verification.
 - [ ] Set up JS/TS test runner — no `test` script in `@zeep/ui` or `@zeep/core`, Vitest not installed despite PROJECT.md listing it as stack. Zero JS/TS test coverage today.
 - [ ] Add unit tests to `zeep-kit` — currently 0 tests
 - [ ] Review `tauri-plugin-updater` v2 API before writing zeep-updater spec
