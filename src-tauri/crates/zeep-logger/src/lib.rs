@@ -88,7 +88,13 @@ impl Default for Builder {
 fn remove_stale_files(dir: &Path, days: u64) -> io::Result<()> {
     let cutoff = SystemTime::now() - Duration::from_secs(days * 86_400);
 
-    for entry in std::fs::read_dir(dir)? {
+    let read_dir = match std::fs::read_dir(dir) {
+        Ok(read_dir) => read_dir,
+        Err(err) if err.kind() == io::ErrorKind::NotFound => return Ok(()),
+        Err(err) => return Err(err),
+    };
+
+    for entry in read_dir {
         let entry = entry?;
         let metadata = entry.metadata()?;
         if metadata.is_file() && metadata.modified()? < cutoff {
@@ -150,5 +156,15 @@ mod tests {
 
         assert!(!old_file.exists());
         assert!(new_file.exists());
+    }
+
+    #[test]
+    fn cleanup_on_missing_directory_is_a_no_op() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let missing_dir = dir.path().join("does-not-exist");
+
+        let result = remove_stale_files(&missing_dir, 5);
+
+        assert!(result.is_ok());
     }
 }
