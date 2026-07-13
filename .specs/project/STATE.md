@@ -48,10 +48,8 @@ _None yet._
 - [x] Check Tauri v2 keychain plugin vs raw `keyring` crate integration → resolved D07 (`keyring` crate)
 - [x] **ZT-6** — Implement PrefsStore (PRF-01..PRF-10) in `src-tauri/crates/zeep-core/src/prefs.rs` — done, 19 Rust tests passing across prefs/keychain/shell
 - [x] **zeep-kit Builder** — `Builder::build()` now returns a real `tauri::plugin::TauriPlugin<R>` with declared `zeep-kit:default` permissions (D12 implemented); `apps/demo` migrated to `.plugin(zeep_kit::Builder::new().namespace(...).build())`. zeep-kit test count: 0 → 3.
-- [ ] **NEXT:** Add unit tests to remaining zeep-kit gaps as new modules land (zeep-logger/zeep-ai); JS/TS test runner setup still pending (tracked separately below)
-- [ ] Add frontend invoke() wiring in apps/demo/src/ for at least one zeep-kit command (prefs/keychain/shell) — currently the demo UI has zero invoke() calls, so there's no end-to-end proof the zeep-kit:default capability actually unblocks a command from JS. Found during zeep-kit Builder Task 7 verification.
-- [ ] Set up JS/TS test runner — no `test` script in `@zeep/ui` or `@zeep/core`, Vitest not installed despite PROJECT.md listing it as stack. Zero JS/TS test coverage today.
-- [ ] Add unit tests to `zeep-kit` — currently 0 tests
+- [x] **M1 close** — Vitest set up in `@zeep/core` (11 tests, node env, mocks `invoke`) and `@zeep/ui` (15 tests across 9 component files, jsdom + Testing Library). `apps/demo` gained `@zeep/core` dependency + a "Native Kit" section in `UIGallery.tsx` wiring real `prefsGet/Set`, `keychainGet/Set`, `shellWhich` calls. Merged to `main` (`e683802..d36a111`). **M1 (Foundation) is now done**, with one caveat: the Native Kit click-through was only verified via `tsc`/`vite build`/`cargo build` + startup-log inspection (no display in this environment) — see NEXT below.
+- [ ] **NEXT:** Manual QA — click through the Native Kit section (`pnpm tauri dev` inside `apps/demo`) with a real display and confirm prefs/keychain round-trip + `shellWhich("node")` visually. Static IPC contract (capability → permission → handler → wrapper) was verified consistent by the final branch review, but no one has actually clicked the buttons yet.
 - [ ] Review `tauri-plugin-updater` v2 API before writing zeep-updater spec
 - [ ] Research `tauri-plugin-log` to decide zeep-logger approach (wrap vs replace)
 - [ ] Resolve Q04: zeep-logger — `tauri-plugin-log` wrap vs custom rotation
@@ -78,6 +76,8 @@ _None yet._
 | L01 | `tauri-build::build()` always requires `src-tauri/icons/icon.png` at compile time, even with `bundle.icon = []` in tauri.conf.json. `cargo check` fails with "failed to open icon icons/icon.png: No such file or directory". Fix: create a minimal valid PNG placeholder (1x1 pixel) in `icons/`. | 2026-06-26 |
 | L02 | `apps/demo/src-tauri/` must be a separate Cargo workspace from the main `src-tauri/` workspace. Reference library crates via path dependency: `zeep-core = { path = "../../../src-tauri/crates/zeep-core" }`. Cargo resolves each workspace's deps independently — no conflicts. | 2026-06-26 |
 | L03 | `pnpm -r test` runs 0 tests silently (exit 0) because `@zeep/ui` and `@zeep/core` have no `test` script and Vitest isn't installed — despite PROJECT.md listing Vitest + Testing Library as the UI test stack. `cargo test --workspace` is real: 19 passing tests in zeep-core (prefs/keychain/shell), 0 in zeep-kit. JS/TS coverage is 0%. | 2026-07-13 |
+| L04 | jsdom's `disabled` button CSS (`pointer-events: none`, set by `@zeep/ui`'s own `Button.tsx`) makes `@testing-library/user-event`'s default `click()` throw — real component behavior, not a test bug. Fix: `userEvent.click(btn, { pointerEventsCheck: 0 })` when the assertion under test is "onClick does not fire," not "the click physically succeeds." | 2026-07-13 |
+| L05 | Compile-time + startup-log verification (`tsc`/`vite build` pass, `tauri dev` boots with no capability/IPC errors) proves the plugin registers and the capability resolves — it does NOT prove a click-through round-trip works. A handler-side serialization bug only surfaces on actual invocation. Static IPC-contract tracing (arg names in JS match Rust command params, command is in `generate_handler!`, permission covers it) is a reasonable substitute when no display is available, but real manual QA is still owed before calling the feature done. | 2026-07-13 |
 
 ---
 
