@@ -16,7 +16,8 @@
         "title": "zeep-demo",
         "width": 1200,
         "height": 800,
-        "resizable": false
+        "resizable": false,
+        "backgroundColor": "#0d0d0f"
       }
     ],
     "security": {
