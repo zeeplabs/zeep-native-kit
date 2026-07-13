@@ -21,6 +21,7 @@ _Persistent memory across sessions: decisions, blockers, lessons, todos, deferre
 | D11 | Component dev in demo Tauri app (`apps/demo/`) | Tests real Tauri integration; no extra tooling; UIGallery page covers all components | 2026-06-26 |
 | D12 | zeep-kit usa `tauri::plugin::Plugin` internamente + API fluente própria (`zeep_kit::Builder`) | Tauri v2 exige capabilities declaradas por plugin; sem isso comandos bloqueados em produção. Plugin pattern declara permissions automaticamente, eliminando configuração manual pelo consumidor | 2026-06-26 |
 | D13 | zeep-kit Builder derives keychain service as `dev.zeep.{namespace}`, registers prefs+keychain+shell together (no per-module opt-in) | Simplest correct implementation of D12; per-module opt-in deferred until zeep-logger/zeep-ai exist (YAGNI) | 2026-07-13 |
+| D14 | zeep-logger wraps `tauri-plugin-log` (2.8.0) instead of custom file rotation; registered as its own separate `.plugin()` call, not merged into zeep-kit's plugin | `tauri_plugin_log::Builder::build()` already returns a closed `TauriPlugin<R>` — can't nest one plugin inside another's setup/invoke_handler. Resolves Q04 | 2026-07-13 |
 
 ---
 
@@ -31,7 +32,7 @@ _Persistent memory across sessions: decisions, blockers, lessons, todos, deferre
 | Q01 | Styling: vanilla-extract vs plain CSS vars + Tailwind preset? | Julio | **resolved → D09** |
 | Q02 | Should zeep-ui ship as a Vite plugin (injects CSS vars) or pure component lib? | Julio | **resolved → D10** |
 | Q03 | Storybook for component dev or use the demo Tauri app directly? | Julio | **resolved → D11** |
-| Q04 | zeep-logger: write to Tauri log plugin or custom file rotation? | Julio | open |
+| Q04 | zeep-logger: write to Tauri log plugin or custom file rotation? | Julio | **resolved → D14** |
 | Q05 | AI streaming: spawn process + pipe stdout line-by-line or use `tauri-plugin-shell` stream API? | Julio | open |
 
 ---
@@ -50,9 +51,9 @@ _None yet._
 - [x] **zeep-kit Builder** — `Builder::build()` now returns a real `tauri::plugin::TauriPlugin<R>` with declared `zeep-kit:default` permissions (D12 implemented); `apps/demo` migrated to `.plugin(zeep_kit::Builder::new().namespace(...).build())`. zeep-kit test count: 0 → 3.
 - [x] **M1 close** — Vitest set up in `@zeep/core` (11 tests, node env, mocks `invoke`) and `@zeep/ui` (15 tests across 9 component files, jsdom + Testing Library). `apps/demo` gained `@zeep/core` dependency + a "Native Kit" section in `UIGallery.tsx` wiring real `prefsGet/Set`, `keychainGet/Set`, `shellWhich` calls. Merged to `main` (`e683802..d36a111`).
 - [x] **M1 close — manual QA** — clicked through Native Kit section for real (`pnpm tauri dev`). Found and fixed a real bug the static IPC-contract check missed: `@zeep/core`'s `invoke()` calls used bare command names (`"prefs_get"`) left over from before `zeep-kit` became a real Tauri plugin — Tauri v2 auto-namespaces plugin commands as `plugin:zeep-kit|prefs_get`, so every call failed with "Command X not found" until fixed (commit `d890422`). Also fixed native window showing OS-white title bar/initial paint (no `backgroundColor` in `tauri.conf.json`) — same commit. **M1 (Foundation) is now genuinely done**, capability proven end-to-end by a human click, not just compile/log inspection.
+- [x] **zeep-logger** — new crate wrapping `tauri-plugin-log` (D14, resolves Q04). `zeep_logger::Builder` (dev/production presets), JSON-per-line formatter, `cleanup_old_logs` retention util. 5 Rust tests. Merged to `main` (`f6e063a..3233483`). No log viewer UI yet (deferred), not wired into `apps/demo` yet (separate task — consumers register `.plugin(zeep_logger::Builder::production().build())` alongside `zeep_kit`'s).
+- [ ] **NEXT** — wire `zeep-logger` into `apps/demo` (register the plugin, call `cleanup_old_logs` at startup) for the same end-to-end proof M1 needed for zeep-kit.
 - [ ] Review `tauri-plugin-updater` v2 API before writing zeep-updater spec
-- [ ] Research `tauri-plugin-log` to decide zeep-logger approach (wrap vs replace)
-- [ ] Resolve Q04: zeep-logger — `tauri-plugin-log` wrap vs custom rotation
 - [ ] Resolve Q05: AI streaming — `tokio::process` pipe vs `tauri-plugin-shell` stream API
 
 ---
