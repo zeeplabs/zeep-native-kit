@@ -13,6 +13,8 @@
     "@tauri-apps/api": "^2",
     "@zeep/core": "workspace:*",
     "@zeep/ui": "workspace:*",
+    "@zeep/logger": "workspace:*",
+    "@zeep/updater": "workspace:*",
     "react": "^18",
     "react-dom": "^18"
   },

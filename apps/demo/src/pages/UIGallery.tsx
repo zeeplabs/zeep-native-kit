@@ -1,4 +1,4 @@
-import { type CSSProperties, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 import {
   ZeepProvider,
   useZeep,
@@ -16,6 +16,8 @@ import {
 } from '@zeep/ui';
 import type { AccentTheme, Theme } from '@zeep/ui';
 import { prefsGet, prefsSet, keychainGet, keychainSet, shellWhich } from '@zeep/core';
+import { LogViewer, LogLevelSelector, useLogEvents } from '@zeep/logger';
+import { useUpdater, UpdateBanner, UpdateProgress, UpdateReadyDialog } from '@zeep/updater';
 
 const ACCENT_THEMES: AccentTheme[] = ['violet', 'ocean', 'sunset', 'forest', 'graphite'];
 const THEMES: Theme[] = ['light', 'dark', 'system'];
@@ -101,6 +103,12 @@ function GalleryContent() {
   const [keychainValue, setKeychainValue] = useState('');
   const [keychainResult, setKeychainResult] = useState<string | null>(null);
   const [shellResult, setShellResult] = useState<string | null>(null);
+  const logEvents = useLogEvents({ maxEntries: 200 });
+  const updater = useUpdater();
+  const [showLogger, setShowLogger] = useState(false);
+  const [showUpdater, setShowUpdater] = useState(false);
+
+  useEffect(() => { console.log('zeep-ui Gallery mounted'); }, []);
 
   async function handlePrefsSet() {
     try {
@@ -325,9 +333,73 @@ function GalleryContent() {
           </GlassCard>
         </div>
 
-        {/* ── Native Kit (zeep-kit:default capability) ── */}
+        {/* ── Logger (M3) ── */}
         <div style={section}>
-          <div style={sectionTitle}>Native Kit</div>
+          <div style={{ ...sectionTitle, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>Logger</span>
+            <span style={{ fontSize: 'var(--zeep-font-xs)', color: 'var(--zeep-text-muted)' }}>M3</span>
+            <span
+              style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '0.7rem', color: 'var(--zeep-accent)' }}
+              onClick={() => { setShowLogger(s => !s); }}
+            >
+              {showLogger ? 'hide' : 'show'}
+            </span>
+          </div>
+          {showLogger && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <LogLevelSelector initialLevel="Debug" />
+              <LogViewer logEvents={logEvents} maxHeight={300} />
+            </div>
+          )}
+        </div>
+
+        {/* ── Updater (M3) ── */}
+        <div style={section}>
+          <div style={{ ...sectionTitle, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>Updater</span>
+            <span style={{ fontSize: 'var(--zeep-font-xs)', color: 'var(--zeep-text-muted)' }}>M3</span>
+            <span
+              style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '0.7rem', color: 'var(--zeep-accent)' }}
+              onClick={() => { setShowUpdater(s => !s); }}
+            >
+              {showUpdater ? 'hide' : 'show'}
+            </span>
+          </div>
+          {showUpdater && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {updater.state.status === 'available' && !updater.state.dismissed && (
+                <UpdateBanner
+                  version={updater.state.updateInfo!.version}
+                  notes={updater.state.updateInfo!.body}
+                  onInstall={() => { updater.install(); }}
+                  onDismiss={() => { updater.dismiss(); }}
+                />
+              )}
+              {updater.state.status === 'downloading' && (
+                <UpdateProgress
+                  downloaded={updater.state.downloaded}
+                  contentLength={updater.state.contentLength}
+                />
+              )}
+              {updater.state.status === 'ready' && (
+                <UpdateReadyDialog
+                  onRestart={() => { updater.restart(); }}
+                  onDismiss={() => { updater.dismiss(); }}
+                />
+              )}
+              {updater.state.status === 'error' && (
+                <div style={{ fontSize: 'var(--zeep-font-sm)', color: '#ef4444' }}>
+                  Error: {updater.state.error}
+                </div>
+              )}
+              <div style={row}>
+                <Button variant="secondary" size="sm" onClick={async () => { await updater.check(); }}>
+                  {updater.state.status === 'checking' ? 'Checking…' : 'Check for Updates'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
               <div style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-text-muted)', marginBottom: '0.5rem' }}>

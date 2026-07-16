@@ -1,3 +1,14 @@
+## Default Permission
+
+Default permissions for zeep-ai commands
+
+#### This default permission set includes the following:
+
+- `allow-ai-detect-providers`
+- `allow-ai-run`
+- `allow-ai-run-stream`
+- `allow-ai-cancel`
+
 ## Permission Table
 
 <table>
@@ -107,19 +118,6 @@ Enables the ai_run_stream command without any pre-configured scope.
 <td>
 
 Denies the ai_run_stream command without any pre-configured scope.
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`zeep-ai:ai:default`
-
-</td>
-<td>
-
-Allows all zeep-ai commands
 
 </td>
 </tr>

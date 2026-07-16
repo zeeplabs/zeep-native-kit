@@ -343,10 +343,10 @@
           "markdownDescription": "Denies the ai_run_stream command without any pre-configured scope."
         },
         {
-          "description": "Allows all zeep-ai commands",
+          "description": "Default permissions for zeep-ai commands\n#### This default permission set includes:\n\n- `allow-ai-detect-providers`\n- `allow-ai-run`\n- `allow-ai-run-stream`\n- `allow-ai-cancel`",
           "type": "string",
-          "const": "ai:default",
-          "markdownDescription": "Allows all zeep-ai commands"
+          "const": "default",
+          "markdownDescription": "Default permissions for zeep-ai commands\n#### This default permission set includes:\n\n- `allow-ai-detect-providers`\n- `allow-ai-run`\n- `allow-ai-run-stream`\n- `allow-ai-cancel`"
         }
       ]
     }

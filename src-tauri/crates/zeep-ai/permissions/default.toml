@@ -1,9 +1,10 @@
-[[permission]]
-identifier = "ai:default"
-description = "Allows all zeep-ai commands"
-commands.allow = [
-    "ai_detect_providers",
-    "ai_run",
-    "ai_run_stream",
-    "ai_cancel",
+"$schema" = "schemas/schema.json"
+
+[default]
+description = "Default permissions for zeep-ai commands"
+permissions = [
+    "allow-ai-detect-providers",
+    "allow-ai-run",
+    "allow-ai-run-stream",
+    "allow-ai-cancel",
 ]
