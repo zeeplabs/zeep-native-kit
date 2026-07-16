@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-ai-run-stream"
+description = "Enables the ai_run_stream command without any pre-configured scope."
+commands.allow = ["ai_run_stream"]
+
+[[permission]]
+identifier = "deny-ai-run-stream"
+description = "Denies the ai_run_stream command without any pre-configured scope."
+commands.deny = ["ai_run_stream"]

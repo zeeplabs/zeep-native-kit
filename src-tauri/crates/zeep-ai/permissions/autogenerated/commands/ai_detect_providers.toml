@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-ai-detect-providers"
+description = "Enables the ai_detect_providers command without any pre-configured scope."
+commands.allow = ["ai_detect_providers"]
+
+[[permission]]
+identifier = "deny-ai-detect-providers"
+description = "Denies the ai_detect_providers command without any pre-configured scope."
+commands.deny = ["ai_detect_providers"]

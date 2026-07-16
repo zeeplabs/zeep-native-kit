@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "ai:default"
+description = "Allows all zeep-ai commands"
+commands.allow = [
+    "ai_detect_providers",
+    "ai_run",
+    "ai_run_stream",
+    "ai_cancel",
+]

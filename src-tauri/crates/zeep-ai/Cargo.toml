@@ -1,0 +1,24 @@
+[package]
+name = "zeep-ai"
+description = "Local AI CLI integration for zeep-native-kit Tauri apps"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+links = "zeep-ai"
+
+[dependencies]
+tauri.workspace = true
+zeep-core = { path = "../zeep-core", features = ["prefs"] }
+serde.workspace = true
+serde_json.workspace = true
+tokio = { workspace = true, features = ["process"] }
+libc = "0.2"
+
+[build-dependencies]
+tauri-plugin = { workspace = true }
+
+[dev-dependencies]
+tauri = { workspace = true, features = ["test"] }
