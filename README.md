@@ -490,8 +490,8 @@ function MyApp() {
 
 ```bash
 pnpm install
-pnpm -r test          # Vitest (6 packages, 46 tests)
-cargo test --workspace # Rust tests (36 tests)
+pnpm -r test          # Vitest (5 packages with tests, 46 tests)
+cargo test --workspace # Rust tests (55 tests + 1 doctest)
 cargo check            # workspace
 ```
 

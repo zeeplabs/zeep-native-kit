@@ -10,13 +10,19 @@ export interface DetectedProvider {
 
 export type AIStatus = 'idle' | 'detecting' | 'running' | 'done' | 'error';
 
+export interface RunOptions {
+  model?: string;
+  system?: string;
+  maxTokens?: number;
+}
+
 export interface UseAIReturn {
   providers: DetectedProvider[];
   status: AIStatus;
   output: string;
   error: string | null;
   detect: () => Promise<void>;
-  run: (provider: string, prompt: string) => Promise<void>;
+  run: (provider: string, prompt: string, opts?: RunOptions) => Promise<void>;
   cancel: () => Promise<void>;
 }
 
@@ -40,7 +46,7 @@ export function useAI(): UseAIReturn {
     }
   }, []);
 
-  const run = useCallback(async (provider: string, prompt: string) => {
+  const run = useCallback(async (provider: string, prompt: string, opts?: RunOptions) => {
     setOutput('');
     setError(null);
     setStatus('running');
@@ -58,6 +64,9 @@ export function useAI(): UseAIReturn {
       const runId = await invoke<number>('plugin:zeep-ai|ai_run_stream', {
         provider,
         prompt,
+        model: opts?.model,
+        maxTokens: opts?.maxTokens,
+        system: opts?.system,
       });
       currentRunId.current = runId;
     } catch (err) {

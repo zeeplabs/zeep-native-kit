@@ -20,6 +20,9 @@ importers:
       '@tauri-apps/api':
         specifier: ^2
         version: 2.11.1
+      '@zeep/ai':
+        specifier: workspace:*
+        version: link:../../packages/@zeep/ai
       '@zeep/core':
         specifier: workspace:*
         version: link:../../packages/@zeep/core
@@ -99,6 +102,49 @@ importers:
       '@tauri-apps/api':
         specifier: ^2
         version: 2.11.1
+      typescript:
+        specifier: ^5.4.0
+        version: 5.9.3
+      vitest:
+        specifier: ^2
+        version: 2.1.9(jsdom@25.0.1)
+
+  packages/@zeep/kit:
+    dependencies:
+      '@zeep/ai':
+        specifier: workspace:*
+        version: link:../ai
+      '@zeep/core':
+        specifier: workspace:*
+        version: link:../core
+      '@zeep/logger':
+        specifier: workspace:*
+        version: link:../logger
+      '@zeep/ui':
+        specifier: workspace:*
+        version: link:../ui
+      '@zeep/updater':
+        specifier: workspace:*
+        version: link:../updater
+    devDependencies:
+      '@tauri-apps/api':
+        specifier: ^2
+        version: 2.11.1
+      '@types/react':
+        specifier: ^19
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.2.3(@types/react@19.2.17)
+      jsdom:
+        specifier: ^25
+        version: 25.0.1
+      react:
+        specifier: ^19
+        version: 19.2.7
+      react-dom:
+        specifier: ^19
+        version: 19.2.7(react@19.2.7)
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
