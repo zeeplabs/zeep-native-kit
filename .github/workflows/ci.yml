@@ -59,9 +59,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Type check @zeep/core
-        working-directory: packages/@zeep/core
-        run: pnpm exec tsc --noEmit
+      - name: Type check (all packages)
+        run: pnpm -r type-check
+
+      - name: Test (all packages)
+        run: pnpm -r test
 
   build:
     name: Build (macOS)

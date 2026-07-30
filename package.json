@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "tsup": "^8.5.1",
     "typescript": "^5.4.0"
   },
   "engines": {

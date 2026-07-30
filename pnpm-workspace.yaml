@@ -1,3 +1,6 @@
 packages:
   - "packages/@zeep/*"
   - "apps/*"
+
+onlyBuiltDependencies:
+  - esbuild
