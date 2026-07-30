@@ -1,6 +1,6 @@
 {
   "name": "@zeep/updater",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Auto-update components and hooks for zeep-native-kit apps",
   "type": "module",
   "license": "MIT OR Apache-2.0",
@@ -9,7 +9,9 @@
     "url": "git+https://github.com/zeeplabs/zeep-native-kit.git",
     "directory": "packages/@zeep/updater"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

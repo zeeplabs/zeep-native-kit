@@ -7,6 +7,10 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   release:
     name: Release
@@ -32,13 +36,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Trusted Publishing needs npm >= 11.5.1 to mint the OIDC-backed token;
+      # the version bundled with actions/setup-node's Node 20 is older.
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - name: Build
         run: pnpm build
 
+      # No NPM_TOKEN: each @zeep/* package must have a Trusted Publisher
+      # configured on npmjs.com (Package Settings -> Trusted Publisher) pointing
+      # at this repo + workflow file before this step can succeed. First
+      # publish of a brand-new package is done manually (`npm publish`),
+      # since trusted publishing can only be attached to a package that
+      # already exists on the registry.
       - name: Publish to npm
         run: pnpm release
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to crates.io
         working-directory: src-tauri
