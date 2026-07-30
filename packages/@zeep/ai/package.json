@@ -1,0 +1,30 @@
+{
+  "name": "@zeep/ai",
+  "version": "0.1.0",
+  "description": "AI integration components and utilities for zeep-native-kit",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "@tauri-apps/api": "^2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
+    "@testing-library/user-event": "^14",
+    "@tauri-apps/api": "^2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "jsdom": "^25",
+    "react": "^19",
+    "react-dom": "^19",
+    "typescript": "^5.4.0",
+    "vitest": "^2"
+  }
+}

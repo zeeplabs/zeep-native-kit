@@ -11,6 +11,9 @@ links = "zeep-kit"
 
 [dependencies]
 zeep-core.workspace = true
+zeep-logger.workspace = true
+zeep-updater.workspace = true
+zeep-ai = { path = "../zeep-ai" }
 tauri.workspace = true
 
 [build-dependencies]

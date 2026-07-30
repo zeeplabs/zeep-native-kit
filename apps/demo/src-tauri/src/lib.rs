@@ -14,6 +14,7 @@ pub fn run() {
                 .pubkey(ZEEP_UPDATER_PUBKEY)
                 .build(),
         )
+        .plugin(zeep_ai::Builder::build())
         .setup(|app| {
             if let Err(err) = zeep_logger::cleanup_old_logs(app.handle(), 14) {
                 eprintln!("zeep-logger: failed to clean up old logs: {err}");

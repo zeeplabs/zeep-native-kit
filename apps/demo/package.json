@@ -15,6 +15,7 @@
     "@zeep/ui": "workspace:*",
     "@zeep/logger": "workspace:*",
     "@zeep/updater": "workspace:*",
+    "@zeep/ai": "workspace:*",
     "react": "^18",
     "react-dom": "^18"
   },

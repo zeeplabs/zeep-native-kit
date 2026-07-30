@@ -6,6 +6,7 @@
   "permissions": [
     "core:default",
     "zeep-kit:default",
-    "updater:default"
+    "updater:default",
+    "zeep-ai:default"
   ]
 }

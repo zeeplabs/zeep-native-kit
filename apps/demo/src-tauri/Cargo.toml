@@ -17,5 +17,6 @@ serde_json = "1"
 zeep-kit = { path = "../../../src-tauri/crates/zeep-kit" }
 zeep-logger = { path = "../../../src-tauri/crates/zeep-logger" }
 zeep-updater = { path = "../../../src-tauri/crates/zeep-updater" }
+zeep-ai = { path = "../../../src-tauri/crates/zeep-ai" }
 # direct dep needed for Tauri build to discover plugin permissions
 tauri-plugin-updater = "2"

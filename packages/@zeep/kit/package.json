@@ -1,0 +1,35 @@
+{
+  "name": "@zeep/kit",
+  "version": "0.1.0",
+  "description": "Umbrella package — re-exports all @zeep modules",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@zeep/core": "workspace:*",
+    "@zeep/ui": "workspace:*",
+    "@zeep/logger": "workspace:*",
+    "@zeep/updater": "workspace:*",
+    "@zeep/ai": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19",
+    "@tauri-apps/api": "^2"
+  },
+  "devDependencies": {
+    "@tauri-apps/api": "^2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "jsdom": "^25",
+    "react": "^19",
+    "react-dom": "^19",
+    "typescript": "^5.4.0",
+    "vitest": "^2"
+  }
+}

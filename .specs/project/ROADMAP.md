@@ -28,20 +28,20 @@ Goal: production-grade observability and self-updating apps.
 - [x] **zeep-updater** — Tauri updater integration, semver gate, demo wiring with signing key
 - [x] **zeep-updater** React package — UpdateBanner, UpdateProgress, UpdateReadyDialog, useUpdater hook
 
-### M4 · AI Integration (v0.4)
+### M4 · AI Integration (v0.4) ✅
 Goal: any app can call the user's local AI CLI in 3 lines.
 
-- [ ] **zeep-ai** — CLI detection (claude/codex/ollama), streaming runner, response parser
-- [ ] AIText utilities (strip fences, truncate, first-line)
-- [ ] Demo: AI-powered command palette in the demo app
+- [x] **zeep-ai** — CLI detection (claude/codex/ollama/llm/opencode), streaming runner with process group kill, response parser
+- [x] AIText utilities (stripFences, truncate, firstLine, extractJson)
+- [x] Demo: AI section in UIGallery with provider picker, prompt input, streaming response
 
 ### M5 · Umbrella + Docs (v1.0)
 Goal: stable public API, full docs, published to npm + crates.io.
 
-- [ ] **zeep-kit** umbrella package — re-exports all modules
-- [ ] `configure()` top-level API
-- [ ] README + API docs (TypeDoc + rustdoc)
-- [ ] Migration guide from raw Tauri
+- [x] **zeep-kit** umbrella package — `@zeep/kit` barrel re-exportando todos os módulos
+- [x] `configure()` top-level API — `zeep_kit::Builder::install(tauri::Builder)`
+- [x] README + API docs (TypeDoc + rustdoc)
+- [x] Migration guide from raw Tauri
 - [ ] Publish v1.0.0
 
 ---
@@ -65,6 +65,11 @@ Goal: stable public API, full docs, published to npm + crates.io.
 | Log viewer component | zeep-logger | M3 | **done** |
 | Auto-updater | zeep-updater | M3 | **done** |
 | Update UI | zeep-updater | M3 | **done** |
-| AI CLI detection | zeep-ai | M4 | planned |
-| AI streaming runner | zeep-ai | M4 | planned |
-| configure() umbrella | zeep-kit | M5 | planned |
+| AI CLI detection | zeep-ai | M4 | **done** |
+| AI streaming runner | zeep-ai | M4 | **done** |
+| @zeep/kit barrel | zeep-kit | M5 | **done** |
+| configure() top-level API | zeep-kit | M5 | **done** |
+| CI pipeline | infra | M1 | **done** |
+| Changesets release | infra | M1 | **done** |
+| README + API docs | docs | M5 | pending |
+| Publish v1.0.0 | release | M5 | pending |

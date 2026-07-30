@@ -10,9 +10,16 @@ use zeep_core::shell::{ShellRunner, ShellState};
 
 pub use zeep_core;
 
+enum LogConfig {
+    Dev,
+    Prod,
+}
+
 pub struct Builder {
     namespace: Option<String>,
     shell_cwd: Option<PathBuf>,
+    log_config: Option<LogConfig>,
+    updater_pubkey: Option<String>,
 }
 
 impl Builder {
@@ -20,6 +27,8 @@ impl Builder {
         Self {
             namespace: None,
             shell_cwd: None,
+            log_config: None,
+            updater_pubkey: None,
         }
     }
 
@@ -33,6 +42,27 @@ impl Builder {
         self
     }
 
+    /// Enable the logger with the development preset (stdout + webview, Debug level).
+    pub fn log_dev(mut self) -> Self {
+        self.log_config = Some(LogConfig::Dev);
+        self
+    }
+
+    /// Enable the logger with the production preset (file rotation, Info level).
+    pub fn log_prod(mut self) -> Self {
+        self.log_config = Some(LogConfig::Prod);
+        self
+    }
+
+    /// Enable the auto-updater with the given signing public key.
+    pub fn updater(mut self, pubkey: impl Into<String>) -> Self {
+        self.updater_pubkey = Some(pubkey.into());
+        self
+    }
+
+    /// Build the core plugin (prefs + keychain + shell).
+    /// For registering just the core modules with `.plugin()`.  
+    /// For registering ALL modules in one call, use [`Builder::install`].
     pub fn build<R: Runtime>(self) -> TauriPlugin<R> {
         let namespace = self.namespace.unwrap_or_else(|| "zeep-app".into());
         let keychain_service = resolve_keychain_service(&namespace);
@@ -71,6 +101,80 @@ impl Builder {
                 zeep_core::shell::shell_run_stream,
             ])
             .build()
+    }
+
+    /// Register all plugins into a `tauri::Builder` and return it.
+    ///
+    /// Registers: core (prefs/keychain/shell), optionally logger + updater + AI.
+    /// The consumer still needs to call `.run(tauri::generate_context!())`.
+    ///
+    /// ```no_run
+    /// zeep_kit::Builder::new()
+    ///     .namespace("dev.myapp")
+    ///     .log_dev()
+    ///     .updater("public-key-hex")
+    ///     .install(tauri::Builder::default());
+    /// ```
+    pub fn install<R: Runtime>(self, mut builder: tauri::Builder<R>) -> tauri::Builder<R> {
+        let Builder { namespace, shell_cwd, log_config, updater_pubkey } = self;
+
+        let core_plugin = {
+            let ns = namespace.unwrap_or_else(|| "zeep-app".into());
+            let keychain_service = resolve_keychain_service(&ns);
+            let cwd = shell_cwd;
+
+            PluginBuilder::<R>::new("zeep-kit")
+                .setup(move |app, _api| {
+                    let app_data_dir = app.path().app_data_dir()?;
+
+                    let prefs: PrefsState =
+                        Arc::new(RwLock::new(PrefsStore::new(&ns, app_data_dir)));
+                    app.manage(prefs);
+
+                    let keychain: KeychainState =
+                        Arc::new(RwLock::new(Keychain::new(&keychain_service)));
+                    app.manage(keychain);
+
+                    let shell_cwd = cwd.clone().unwrap_or_else(|| {
+                        std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))
+                    });
+                    let shell: ShellState =
+                        Arc::new(RwLock::new(ShellRunner::new(shell_cwd)));
+                    app.manage(shell);
+
+                    Ok(())
+                })
+                .invoke_handler(tauri::generate_handler![
+                    zeep_core::prefs::prefs_get,
+                    zeep_core::prefs::prefs_set,
+                    zeep_core::prefs::prefs_delete,
+                    zeep_core::prefs::prefs_get_all,
+                    zeep_core::keychain::keychain_get,
+                    zeep_core::keychain::keychain_set,
+                    zeep_core::keychain::keychain_delete,
+                    zeep_core::shell::shell_which,
+                    zeep_core::shell::shell_run,
+                    zeep_core::shell::shell_run_stream,
+                ])
+                .build()
+        };
+
+        builder = builder.plugin(core_plugin);
+
+        if let Some(config) = log_config {
+            let plugin = match config {
+                LogConfig::Dev => zeep_logger::Builder::development().build(),
+                LogConfig::Prod => zeep_logger::Builder::production().build(),
+            };
+            builder = builder.plugin(plugin);
+        }
+
+        if let Some(pubkey) = updater_pubkey {
+            let plugin = zeep_updater::Builder::new().pubkey(pubkey).build();
+            builder = builder.plugin(plugin);
+        }
+
+        builder.plugin(zeep_ai::Builder::build())
     }
 }
 

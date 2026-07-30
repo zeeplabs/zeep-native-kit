@@ -18,6 +18,7 @@ import type { AccentTheme, Theme } from '@zeep/ui';
 import { prefsGet, prefsSet, keychainGet, keychainSet, shellWhich } from '@zeep/core';
 import { LogViewer, LogLevelSelector, useLogEvents } from '@zeep/logger';
 import { useUpdater, UpdateBanner, UpdateProgress, UpdateReadyDialog } from '@zeep/updater';
+import { useAI, AIProviderStatus, AIPromptInput, AIResponseStream, AIProviderPicker, stripFences } from '@zeep/ai';
 
 const ACCENT_THEMES: AccentTheme[] = ['violet', 'ocean', 'sunset', 'forest', 'graphite'];
 const THEMES: Theme[] = ['light', 'dark', 'system'];
@@ -107,6 +108,9 @@ function GalleryContent() {
   const updater = useUpdater();
   const [showLogger, setShowLogger] = useState(false);
   const [showUpdater, setShowUpdater] = useState(false);
+  const ai = useAI();
+  const [selectedProvider, setSelectedProvider] = useState('');
+  const [aiVisible, setAiVisible] = useState(false);
 
   useEffect(() => { console.log('zeep-ui Gallery mounted'); }, []);
 
@@ -331,6 +335,52 @@ function GalleryContent() {
           <GlassCard padding="lg" radius="lg">
             <MarkdownRenderer content={SAMPLE_MD} searchQuery={searchQuery || undefined} />
           </GlassCard>
+        </div>
+
+        {/* ── AI Integration (M4) ── */}
+        <div style={section}>
+          <div style={{ ...sectionTitle, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>AI</span>
+            <span style={{ fontSize: 'var(--zeep-font-xs)', color: 'var(--zeep-text-muted)' }}>M4</span>
+            <span
+              style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '0.7rem', color: 'var(--zeep-accent)' }}
+              onClick={() => { setAiVisible(s => !s); }}
+            >
+              {aiVisible ? 'hide' : 'show'}
+            </span>
+          </div>
+          {aiVisible && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <Button variant="secondary" size="sm" onClick={async () => { await ai.detect(); }}>
+                {ai.status === 'detecting' ? 'Detecting…' : 'Detect AI CLIs'}
+              </Button>
+              {ai.providers.length > 0 && (
+                <>
+                  <AIProviderStatus providers={ai.providers} />
+                  <AIProviderPicker
+                    providers={ai.providers}
+                    value={selectedProvider}
+                    onChange={setSelectedProvider}
+                  />
+                  <AIPromptInput
+                    onSend={async (prompt) => {
+                      if (selectedProvider) await ai.run(selectedProvider, prompt);
+                    }}
+                    disabled={!selectedProvider || ai.status === 'running'}
+                  />
+                  {(ai.output || ai.status === 'running') && (
+                    <AIResponseStream text={stripFences(ai.output)} isStreaming={ai.status === 'running'} />
+                  )}
+                  {ai.status === 'running' && (
+                    <Button variant="secondary" size="sm" onClick={ai.cancel}>Cancel</Button>
+                  )}
+                  {ai.error && (
+                    <div style={{ fontSize: 'var(--zeep-font-sm)', color: '#ef4444' }}>Error: {ai.error}</div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         {/* ── Logger (M3) ── */}
