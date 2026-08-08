@@ -13,6 +13,7 @@ use runner::AIRunner;
 
 const PREFS_KEY_PROVIDERS: &str = "zeep_ai.providers";
 
+#[derive(Default)]
 pub struct Builder;
 
 impl Builder {
@@ -99,7 +100,7 @@ fn get_binary<R: Runtime>(app: &AppHandle<R>, provider: &str) -> Result<String, 
         .get::<serde_json::Value>(PREFS_KEY_PROVIDERS)
         .map_err(|e| e.to_string())?
         .and_then(|v| serde_json::from_value::<Vec<DetectedProvider>>(v).ok())
-        .ok_or_else(|| format!("providers not detected. Call ai_detect_providers first"))?;
+        .ok_or_else(|| "providers not detected. Call ai_detect_providers first".to_string())?;
     providers.into_iter()
         .find(|p| p.name == provider)
         .map(|p| p.binary)

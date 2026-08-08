@@ -57,6 +57,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # @zeeptech/kit imports the other packages' `dist/` output (declared via
+      # each package.json's "types" field) — type-check fails on a fresh
+      # checkout without building first.
+      - name: Build (needed for cross-package type resolution)
+        run: pnpm build
+
       - name: Type check (all packages)
         run: pnpm -r type-check
 

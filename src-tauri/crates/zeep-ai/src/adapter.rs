@@ -1,19 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RunOpts {
     pub model: Option<String>,
     pub max_tokens: Option<u32>,
     pub system: Option<String>,
 }
 
-impl Default for RunOpts {
-    fn default() -> Self {
-        Self { model: None, max_tokens: None, system: None }
-    }
-}
-
 pub trait ProviderAdapter: Send + Sync {
+    #[allow(dead_code)]
     fn name(&self) -> &'static str;
     fn build_args(&self, opts: &RunOpts) -> Vec<String>;
 }

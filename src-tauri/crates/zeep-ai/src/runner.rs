@@ -21,6 +21,9 @@ pub struct AiDone {
 }
 
 struct RunState {
+    // Held to keep the child process alive for the run's duration; killed via
+    // `pgid` (D15: libc::killpg for process-group cancellation), not `Child::kill()`.
+    #[allow(dead_code)]
     child: tokio::process::Child,
     pgid: i32,
 }

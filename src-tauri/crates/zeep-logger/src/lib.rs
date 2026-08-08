@@ -136,7 +136,7 @@ fn remove_old_files(dir: &Path, base_name: &str, keep: usize) -> io::Result<()> 
                     .map(|n| {
                         n.starts_with(base_name)
                             && n.ends_with(".log")
-                            && n != &format!("{base_name}.log")
+                            && n != format!("{base_name}.log")
                     })
                     .unwrap_or(false)
             })
