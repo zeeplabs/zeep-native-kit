@@ -1,13 +1,13 @@
 {
-  "name": "@zeep/kit",
+  "name": "@zeeptech/ai",
   "version": "1.0.0",
-  "description": "Umbrella package — re-exports all @zeep modules",
+  "description": "AI integration components and utilities for zeep-native-kit",
   "type": "module",
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zeeplabs/zeep-native-kit.git",
-    "directory": "packages/@zeep/kit"
+    "directory": "packages/@zeeptech/ai"
   },
   "files": [
     "dist"
@@ -28,21 +28,16 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "type-check": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
-  },
-  "dependencies": {
-    "@zeep/core": "workspace:*",
-    "@zeep/ui": "workspace:*",
-    "@zeep/logger": "workspace:*",
-    "@zeep/updater": "workspace:*",
-    "@zeep/ai": "workspace:*"
+    "test": "vitest run"
   },
   "peerDependencies": {
     "react": "^18 || ^19",
-    "react-dom": "^18 || ^19",
     "@tauri-apps/api": "^2"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
+    "@testing-library/user-event": "^14",
     "@tauri-apps/api": "^2",
     "@types/react": "^19",
     "@types/react-dom": "^19",

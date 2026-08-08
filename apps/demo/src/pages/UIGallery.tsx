@@ -13,12 +13,12 @@ import {
   SkeletonText,
   MarkdownRenderer,
   SearchHighlight,
-} from '@zeep/ui';
-import type { AccentTheme, Theme } from '@zeep/ui';
-import { prefsGet, prefsSet, keychainGet, keychainSet, shellWhich } from '@zeep/core';
-import { LogViewer, LogLevelSelector, useLogEvents } from '@zeep/logger';
-import { useUpdater, UpdateBanner, UpdateProgress, UpdateReadyDialog } from '@zeep/updater';
-import { useAI, AIProviderStatus, AIPromptInput, AIResponseStream, AIProviderPicker, stripFences } from '@zeep/ai';
+} from '@zeeptech/ui';
+import type { AccentTheme, Theme } from '@zeeptech/ui';
+import { prefsGet, prefsSet, keychainGet, keychainSet, shellWhich } from '@zeeptech/core';
+import { LogViewer, LogLevelSelector, useLogEvents } from '@zeeptech/logger';
+import { useUpdater, UpdateBanner, UpdateProgress, UpdateReadyDialog } from '@zeeptech/updater';
+import { useAI, AIProviderStatus, AIPromptInput, AIResponseStream, AIProviderPicker, stripFences } from '@zeeptech/ai';
 
 const ACCENT_THEMES: AccentTheme[] = ['violet', 'ocean', 'sunset', 'forest', 'graphite'];
 const THEMES: Theme[] = ['light', 'dark', 'system'];

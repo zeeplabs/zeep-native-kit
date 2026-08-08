@@ -23,21 +23,21 @@ importers:
       '@tauri-apps/api':
         specifier: ^2
         version: 2.11.1
-      '@zeep/ai':
+      '@zeeptech/ai':
         specifier: workspace:*
-        version: link:../../packages/@zeep/ai
-      '@zeep/core':
+        version: link:../../packages/@zeeptech/ai
+      '@zeeptech/core':
         specifier: workspace:*
-        version: link:../../packages/@zeep/core
-      '@zeep/logger':
+        version: link:../../packages/@zeeptech/core
+      '@zeeptech/logger':
         specifier: workspace:*
-        version: link:../../packages/@zeep/logger
-      '@zeep/ui':
+        version: link:../../packages/@zeeptech/logger
+      '@zeeptech/ui':
         specifier: workspace:*
-        version: link:../../packages/@zeep/ui
-      '@zeep/updater':
+        version: link:../../packages/@zeeptech/ui
+      '@zeeptech/updater':
         specifier: workspace:*
-        version: link:../../packages/@zeep/updater
+        version: link:../../packages/@zeeptech/updater
       react:
         specifier: ^18
         version: 18.3.1
@@ -64,7 +64,7 @@ importers:
         specifier: ^5
         version: 5.4.21
 
-  packages/@zeep/ai:
+  packages/@zeeptech/ai:
     devDependencies:
       '@tauri-apps/api':
         specifier: ^2
@@ -100,7 +100,7 @@ importers:
         specifier: ^2
         version: 2.1.9(jsdom@25.0.1)
 
-  packages/@zeep/core:
+  packages/@zeeptech/core:
     devDependencies:
       '@tauri-apps/api':
         specifier: ^2
@@ -112,21 +112,21 @@ importers:
         specifier: ^2
         version: 2.1.9(jsdom@25.0.1)
 
-  packages/@zeep/kit:
+  packages/@zeeptech/kit:
     dependencies:
-      '@zeep/ai':
+      '@zeeptech/ai':
         specifier: workspace:*
         version: link:../ai
-      '@zeep/core':
+      '@zeeptech/core':
         specifier: workspace:*
         version: link:../core
-      '@zeep/logger':
+      '@zeeptech/logger':
         specifier: workspace:*
         version: link:../logger
-      '@zeep/ui':
+      '@zeeptech/ui':
         specifier: workspace:*
         version: link:../ui
-      '@zeep/updater':
+      '@zeeptech/updater':
         specifier: workspace:*
         version: link:../updater
     devDependencies:
@@ -155,7 +155,7 @@ importers:
         specifier: ^2
         version: 2.1.9(jsdom@25.0.1)
 
-  packages/@zeep/logger:
+  packages/@zeeptech/logger:
     devDependencies:
       '@tauri-apps/api':
         specifier: ^2
@@ -191,7 +191,7 @@ importers:
         specifier: ^2
         version: 2.1.9(jsdom@25.0.1)
 
-  packages/@zeep/ui:
+  packages/@zeeptech/ui:
     dependencies:
       dompurify:
         specifier: ^3
@@ -234,7 +234,7 @@ importers:
         specifier: ^2
         version: 2.1.9(jsdom@25.0.1)
 
-  packages/@zeep/updater:
+  packages/@zeeptech/updater:
     devDependencies:
       '@tauri-apps/api':
         specifier: ^2

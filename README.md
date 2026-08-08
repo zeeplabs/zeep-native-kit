@@ -12,7 +12,7 @@
 
 zeep-native-kit gives any Tauri app a polished baseline in one call — premium design system, ready-made Rust commands (keychain, prefs, shell), structured logger, auto-updater, and local AI integration (no API key required).
 
-> **Status: pre-release.** The packages (`@zeep/*` on npm, `zeep-*` crates on crates.io) have **not been published** to public registries yet. All code is stable and tested in CI, but today it's only consumable via local workspace or by cloning the repository — see [Installation](#installation--publication-status).
+> **Status: pre-release.** The packages (`@zeeptech/*` on npm, `zeep-*` crates on crates.io) have **not been published** to public registries yet. All code is stable and tested in CI, but today it's only consumable via local workspace or by cloning the repository — see [Installation](#installation--publication-status).
 
 ## Table of Contents
 
@@ -46,7 +46,7 @@ fn main() {
 
 ```tsx
 // App.tsx — frontend with design system + every module
-import { ZeepProvider, Button, LogViewer, useUpdater } from '@zeep/kit';
+import { ZeepProvider, Button, LogViewer, useUpdater } from '@zeeptech/kit';
 
 function App() {
   return (
@@ -81,7 +81,7 @@ The packages are not published to npm or crates.io yet ([see Release Flow](#rele
 // your app's package.json
 {
   "dependencies": {
-    "@zeep/kit": "workspace:*"
+    "@zeeptech/kit": "workspace:*"
   }
 }
 ```
@@ -95,7 +95,7 @@ zeep-kit = { path = "../zeep-native-kit/src-tauri/crates/zeep-kit" }
 **2. After the first publication** — once the packages are published (watch [Releases](https://github.com/zeeplabs/zeep-native-kit/releases)):
 
 ```bash
-pnpm add @zeep/kit
+pnpm add @zeeptech/kit
 ```
 
 ```toml
@@ -138,13 +138,13 @@ zeep_kit::Builder::new()
 └──────┬──────┬──────┬──────┬──────┬──────────┘
        │      │      │      │      │
 ┌──────▼┐ ┌──▼──┐ ┌─▼───┐ ┌─▼───┐ ┌─▼───────┐
-│@zeep/ │ │@zeep│ │@zeep│ │@zeep│ │@zeep/   │
+│@zeeptech/ │ │@zeep│ │@zeep│ │@zeep│ │@zeeptech/   │
 │core   │ │/ui  │ │/log │ │/upd │ │ai       │
 │(invoke│ │     │ │ger  │ │ater │ │(useAI,  │
 │wraps) │ │     │ │     │ │     │ │comps)   │
 └───────┘ └─────┘ └─────┘ └─────┘ └─────────┘
        ┌─────────────────────────────────────┐
-       │          @zeep/kit (barrel)          │
+       │          @zeeptech/kit (barrel)          │
        │   re-exports every package           │
        └─────────────────────────────────────┘
 
@@ -175,12 +175,12 @@ zeep_kit::Builder::new()
 
 | Package | Description |
 |---------|-------------|
-| `@zeep/kit` | Barrel — re-exports all packages below |
-| `@zeep/core` | TypeScript wrappers for Tauri commands (`prefsGet`, `keychainSet`, `shellRun`, etc.) |
-| `@zeep/ui` | Design system: `ZeepProvider`, `Button`, `GlassCard`, `AnimatedBackground`, `MarkdownRenderer`, etc. |
-| `@zeep/logger` | `LogViewer` (virtualized, filter, export JSON), `LogLevelSelector`, `useLogEvents` |
-| `@zeep/updater` | `UpdateBanner`, `UpdateProgress`, `UpdateReadyDialog`, `useUpdater` |
-| `@zeep/ai` | `useAI` hook, `AIProviderStatus`, `AIPromptInput`, `AIResponseStream`, `AIProviderPicker`, AIText utilities |
+| `@zeeptech/kit` | Barrel — re-exports all packages below |
+| `@zeeptech/core` | TypeScript wrappers for Tauri commands (`prefsGet`, `keychainSet`, `shellRun`, etc.) |
+| `@zeeptech/ui` | Design system: `ZeepProvider`, `Button`, `GlassCard`, `AnimatedBackground`, `MarkdownRenderer`, etc. |
+| `@zeeptech/logger` | `LogViewer` (virtualized, filter, export JSON), `LogLevelSelector`, `useLogEvents` |
+| `@zeeptech/updater` | `UpdateBanner`, `UpdateProgress`, `UpdateReadyDialog`, `useUpdater` |
+| `@zeeptech/ai` | `useAI` hook, `AIProviderStatus`, `AIPromptInput`, `AIResponseStream`, `AIProviderPicker`, AIText utilities |
 
 ## Modules
 
@@ -200,7 +200,7 @@ let all = store.get_all();
 
 **Frontend:**
 ```typescript
-import { prefsGet, prefsSet } from '@zeep/kit';
+import { prefsGet, prefsSet } from '@zeeptech/kit';
 
 await prefsSet('theme', 'dark');
 const theme = await prefsGet('theme');
@@ -253,7 +253,7 @@ Commands: `logger_set_level(level: u8)` — change log level at runtime. `logger
 
 **Frontend:**
 ```tsx
-import { LogViewer, LogLevelSelector, useLogEvents } from '@zeep/kit';
+import { LogViewer, LogLevelSelector, useLogEvents } from '@zeeptech/kit';
 
 function DevPanel() {
   const logEvents = useLogEvents();
@@ -280,7 +280,7 @@ Commands: `check`, `download_and_install`, `download`, `install` (exposed by `ta
 
 **Frontend:**
 ```tsx
-import { useUpdater, UpdateBanner, UpdateProgress, UpdateReadyDialog } from '@zeep/kit';
+import { useUpdater, UpdateBanner, UpdateProgress, UpdateReadyDialog } from '@zeeptech/kit';
 
 function UpdateManager() {
   const updater = useUpdater();
@@ -325,7 +325,7 @@ Commands: `ai_detect_providers` → `Vec<DetectedProvider>`, `ai_run`/`ai_run_st
 
 **Frontend:**
 ```tsx
-import { useAI, AIProviderPicker, AIPromptInput, AIResponseStream } from '@zeep/kit';
+import { useAI, AIProviderPicker, AIPromptInput, AIResponseStream } from '@zeeptech/kit';
 
 function AIPanel() {
   const ai = useAI();
@@ -350,14 +350,14 @@ function AIPanel() {
 }
 ```
 
-### UI (`@zeep/ui`)
+### UI (`@zeeptech/ui`)
 
 9 components + design token system with 5 accent themes (violet, ocean, sunset, forest, graphite).
 
 ```tsx
 import { ZeepProvider, Button, GlassCard, AnimatedBackground,
          ShimmerText, StatusDot, ToastProvider, useToast,
-         Skeleton, MarkdownRenderer, SearchHighlight } from '@zeep/kit';
+         Skeleton, MarkdownRenderer, SearchHighlight } from '@zeeptech/kit';
 
 function App() {
   return (
@@ -408,7 +408,7 @@ tauri = "2"
 // package.json
 {
   "dependencies": {
-    "@zeep/kit": "^1.0",
+    "@zeeptech/kit": "^1.0",
     "@tauri-apps/api": "^2",
     "react": "^18"
   }
@@ -492,7 +492,7 @@ useEffect(() => {
 
 **After — one provider:**
 ```tsx
-import { ZeepProvider, useZeep } from '@zeep/kit';
+import { ZeepProvider, useZeep } from '@zeeptech/kit';
 
 function App() {
   return (
@@ -512,9 +512,9 @@ function MyApp() {
 
 | Module | Cargo.toml | Package.json | Rust | Frontend |
 |--------|-----------|-------------|------|----------|
-| Logger | `zeep-kit` → `.log_dev()` | `@zeep/kit` | auto | `LogViewer`, `LogLevelSelector` |
-| Updater | `zeep-kit` → `.updater(pk)` | `@zeep/kit` | auto | `UpdateBanner`, `useUpdater` |
-| AI | `zeep-kit` → auto-enabled | `@zeep/kit` | auto | `AIPromptInput`, `useAI` |
+| Logger | `zeep-kit` → `.log_dev()` | `@zeeptech/kit` | auto | `LogViewer`, `LogLevelSelector` |
+| Updater | `zeep-kit` → `.updater(pk)` | `@zeeptech/kit` | auto | `UpdateBanner`, `useUpdater` |
+| AI | `zeep-kit` → auto-enabled | `@zeeptech/kit` | auto | `AIPromptInput`, `useAI` |
 
 ## Release Flow
 
@@ -557,8 +557,8 @@ mkdir -p src-tauri/crates/zeep-xyz/src
 ### Adding a new package
 
 ```bash
-mkdir -p packages/@zeep/xyz/src
-# Copy package.json, tsconfig.json, vitest.config.ts from @zeep/logger
+mkdir -p packages/@zeeptech/xyz/src
+# Copy package.json, tsconfig.json, vitest.config.ts from @zeeptech/logger
 # Add workspace dep to apps/demo/package.json
 ```
 
@@ -580,7 +580,7 @@ zeep-native-kit/
 │       ├── zeep-updater/   # Auto-update
 │       └── zeep-ai/        # AI CLI integration
 ├── packages/
-│   └── @zeep/
+│   └── @zeeptech/
 │       ├── core/           # TS command wrappers
 │       ├── ui/             # React design system
 │       ├── logger/         # LogViewer + controls

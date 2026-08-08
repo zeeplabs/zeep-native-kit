@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
-    "@zeep/core": "workspace:*",
-    "@zeep/ui": "workspace:*",
-    "@zeep/logger": "workspace:*",
-    "@zeep/updater": "workspace:*",
-    "@zeep/ai": "workspace:*",
+    "@zeeptech/core": "workspace:*",
+    "@zeeptech/ui": "workspace:*",
+    "@zeeptech/logger": "workspace:*",
+    "@zeeptech/updater": "workspace:*",
+    "@zeeptech/ai": "workspace:*",
     "react": "^18",
     "react-dom": "^18"
   },

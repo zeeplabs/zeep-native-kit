@@ -1,13 +1,13 @@
 {
-  "name": "@zeep/ai",
+  "name": "@zeeptech/logger",
   "version": "1.0.0",
-  "description": "AI integration components and utilities for zeep-native-kit",
+  "description": "Log viewer and controls for zeep-native-kit apps",
   "type": "module",
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zeeplabs/zeep-native-kit.git",
-    "directory": "packages/@zeep/ai"
+    "directory": "packages/@zeeptech/logger"
   },
   "files": [
     "dist"
@@ -32,6 +32,7 @@
   },
   "peerDependencies": {
     "react": "^18 || ^19",
+    "react-dom": "^18 || ^19",
     "@tauri-apps/api": "^2"
   },
   "devDependencies": {

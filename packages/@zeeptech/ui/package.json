@@ -1,5 +1,5 @@
 {
-  "name": "@zeep/ui",
+  "name": "@zeeptech/ui",
   "version": "1.0.0",
   "description": "React component library and design system for Tauri desktop apps",
   "type": "module",
@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zeeplabs/zeep-native-kit.git",
-    "directory": "packages/@zeep/ui"
+    "directory": "packages/@zeeptech/ui"
   },
   "files": [
     "dist"

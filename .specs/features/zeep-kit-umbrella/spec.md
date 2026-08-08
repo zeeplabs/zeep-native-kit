@@ -53,17 +53,17 @@ tauri_builder
 
 | ID | Requirement |
 |----|-------------|
-| JS-01 | `ZeepProvider` from `@zeep/kit` re-exports ZeepProvider from `@zeep/ui` |
-| JS-02 | `configure` from `@zeep/kit/tauri` is a React hook that waits for `zeep:ready` event |
-| JS-03 | `@zeep/kit` re-exports all hooks and components from `@zeep/ui`, `@zeep/ai`, `@zeep/logger`, `@zeep/updater` |
-| JS-04 | Tree-shaking: each module is a separate entry point; `@zeep/kit` is a convenience barrel |
+| JS-01 | `ZeepProvider` from `@zeeptech/kit` re-exports ZeepProvider from `@zeeptech/ui` |
+| JS-02 | `configure` from `@zeeptech/kit/tauri` is a React hook that waits for `zeep:ready` event |
+| JS-03 | `@zeeptech/kit` re-exports all hooks and components from `@zeeptech/ui`, `@zeeptech/ai`, `@zeeptech/logger`, `@zeeptech/updater` |
+| JS-04 | Tree-shaking: each module is a separate entry point; `@zeeptech/kit` is a convenience barrel |
 
 ### MOD · Module Granularity
 
 | ID | Requirement |
 |----|-------------|
-| MOD-01 | Consumer can use `@zeep/core` alone (no UI dependency) for CLI tools |
-| MOD-02 | Consumer can use `@zeep/ui` alone (no Rust commands) for web-only preview |
+| MOD-01 | Consumer can use `@zeeptech/core` alone (no UI dependency) for CLI tools |
+| MOD-02 | Consumer can use `@zeeptech/ui` alone (no Rust commands) for web-only preview |
 | MOD-03 | Rust crate `zeep-core` can be used independently without the full `zeep-kit` feature flags |
 | MOD-04 | Each npm package has its own `package.json` and is independently versioned via Changesets |
 
@@ -71,7 +71,7 @@ tauri_builder
 
 ```
 packages/
-  @zeep/
+  @zeeptech/
     core/          # Tauri commands TypeScript bindings + Rust crate
     ui/            # React components + design tokens
     ai/            # AI runner + utilities

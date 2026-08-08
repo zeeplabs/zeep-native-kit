@@ -1,7 +1,7 @@
 # Contributing to zeep-native-kit
 
 Thanks for your interest in contributing. This project is a pnpm + Cargo
-hybrid monorepo; most changes touch either a `packages/@zeep/*` (TypeScript)
+hybrid monorepo; most changes touch either a `packages/@zeeptech/*` (TypeScript)
 package or a `src-tauri/crates/*` (Rust) crate, sometimes both in tandem.
 
 ## Prerequisites
@@ -35,9 +35,9 @@ cargo test --workspace --manifest-path src-tauri/Cargo.toml
 cargo clippy --all-features --manifest-path src-tauri/Cargo.toml -- -D warnings
 ```
 
-Each `packages/@zeep/*` package follows the same layout (`tsup.config.ts`,
-`vitest.config.ts`, `src/index.ts`). Copy an existing package (e.g. `@zeep/logger`)
-as a template when adding a new one, and wire it into `@zeep/kit`'s barrel exports.
+Each `packages/@zeeptech/*` package follows the same layout (`tsup.config.ts`,
+`vitest.config.ts`, `src/index.ts`). Copy an existing package (e.g. `@zeeptech/logger`)
+as a template when adding a new one, and wire it into `@zeeptech/kit`'s barrel exports.
 
 Each `src-tauri/crates/*` crate exposes Tauri commands via `#[tauri::command]`
 and a `Builder`/`install()` entry point consumed by the `zeep-kit` umbrella crate.

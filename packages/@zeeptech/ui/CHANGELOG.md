@@ -1,4 +1,4 @@
-# @zeep/ai
+# @zeeptech/ui
 
 ## 1.0.0
 

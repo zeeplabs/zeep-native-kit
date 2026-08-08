@@ -41,7 +41,7 @@ Equivalent to: CortexAI (Swift).
 | TXT-02 | `firstLine(text)` returns first non-empty line |
 | TXT-03 | `truncate(text, maxChars)` truncates at word boundary with `…` suffix |
 | TXT-04 | `extractJson(text)` tries to parse JSON from a response that may contain surrounding prose |
-| TXT-05 | All utilities are pure functions; exported from `@zeep/ai/utils` |
+| TXT-05 | All utilities are pure functions; exported from `@zeeptech/ai/utils` |
 
 ### UI · AI Components (React)
 

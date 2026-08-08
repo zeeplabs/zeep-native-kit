@@ -1,4 +1,4 @@
-# @zeep/logger
+# @zeeptech/ai
 
 ## 1.0.0
 

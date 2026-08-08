@@ -1,13 +1,13 @@
 {
-  "name": "@zeep/core",
+  "name": "@zeeptech/kit",
   "version": "1.0.0",
-  "description": "TypeScript bindings for zeep-core Tauri commands",
+  "description": "Umbrella package — re-exports all @zeeptech/* modules",
   "type": "module",
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zeeplabs/zeep-native-kit.git",
-    "directory": "packages/@zeep/core"
+    "directory": "packages/@zeeptech/kit"
   },
   "files": [
     "dist"
@@ -28,13 +28,27 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "type-check": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@zeeptech/core": "workspace:*",
+    "@zeeptech/ui": "workspace:*",
+    "@zeeptech/logger": "workspace:*",
+    "@zeeptech/updater": "workspace:*",
+    "@zeeptech/ai": "workspace:*"
   },
   "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19",
     "@tauri-apps/api": "^2"
   },
   "devDependencies": {
     "@tauri-apps/api": "^2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "jsdom": "^25",
+    "react": "^19",
+    "react-dom": "^19",
     "typescript": "^5.4.0",
     "vitest": "^2"
   }

@@ -56,9 +56,9 @@ pnpm monorepo + Cargo workspace + Tauri v2 demo app + zeep-core v0.1 (PrefsStore
 **Depends on:** T03, T05, T06, T07  
 **Done when:** `tauri dev` + `invoke("prefs_set", ...)` from browser console succeeds  
 
-### T09 · TypeScript bindings @zeep/core
-**What:** `packages/@zeep/core/src/index.ts` — typed wrappers for all Tauri commands  
-**Where:** `packages/@zeep/core/`  
+### T09 · TypeScript bindings @zeeptech/core
+**What:** `packages/@zeeptech/core/src/index.ts` — typed wrappers for all Tauri commands  
+**Where:** `packages/@zeeptech/core/`  
 **Depends on:** T08  
 **Done when:** TypeScript compiles; types match Rust command signatures  
 

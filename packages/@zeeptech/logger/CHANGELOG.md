@@ -1,4 +1,4 @@
-# @zeep/updater
+# @zeeptech/logger
 
 ## 1.0.0
 

@@ -38,7 +38,7 @@ Goal: any app can call the user's local AI CLI in 3 lines.
 ### M5 · Umbrella + Docs (v1.0)
 Goal: stable public API, full docs, published to npm + crates.io.
 
-- [x] **zeep-kit** umbrella package — `@zeep/kit` barrel re-exportando todos os módulos
+- [x] **zeep-kit** umbrella package — `@zeeptech/kit` barrel re-exportando todos os módulos
 - [x] `configure()` top-level API — `zeep_kit::Builder::install(tauri::Builder)`
 - [x] README + API docs (TypeDoc + rustdoc)
 - [x] Migration guide from raw Tauri
@@ -67,7 +67,7 @@ Goal: stable public API, full docs, published to npm + crates.io.
 | Update UI | zeep-updater | M3 | **done** |
 | AI CLI detection | zeep-ai | M4 | **done** |
 | AI streaming runner | zeep-ai | M4 | **done** |
-| @zeep/kit barrel | zeep-kit | M5 | **done** |
+| @zeeptech/kit barrel | zeep-kit | M5 | **done** |
 | configure() top-level API | zeep-kit | M5 | **done** |
 | CI pipeline | infra | M1 | **done** |
 | Changesets release | infra | M1 | **done** |

@@ -1,4 +1,4 @@
-# @zeep/core
+# @zeeptech/updater
 
 ## 1.0.0
 

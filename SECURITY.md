@@ -29,6 +29,6 @@ a patched release and advisory.
 ## Scope
 
 This policy covers the Rust crates in `src-tauri/crates/` and the npm packages
-in `packages/@zeep/*`. Vulnerabilities in upstream dependencies (Tauri, keyring,
+in `packages/@zeeptech/*`. Vulnerabilities in upstream dependencies (Tauri, keyring,
 tauri-plugin-updater, etc.) should be reported to their respective maintainers,
 but feel free to flag them here too if they affect zeep-native-kit's usage.

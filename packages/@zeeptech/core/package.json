@@ -1,13 +1,13 @@
 {
-  "name": "@zeep/logger",
+  "name": "@zeeptech/core",
   "version": "1.0.0",
-  "description": "Log viewer and controls for zeep-native-kit apps",
+  "description": "TypeScript bindings for zeep-core Tauri commands",
   "type": "module",
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zeeplabs/zeep-native-kit.git",
-    "directory": "packages/@zeep/logger"
+    "directory": "packages/@zeeptech/core"
   },
   "files": [
     "dist"
@@ -31,20 +31,10 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "react": "^18 || ^19",
-    "react-dom": "^18 || ^19",
     "@tauri-apps/api": "^2"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6",
-    "@testing-library/react": "^16",
-    "@testing-library/user-event": "^14",
     "@tauri-apps/api": "^2",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "jsdom": "^25",
-    "react": "^19",
-    "react-dom": "^19",
     "typescript": "^5.4.0",
     "vitest": "^2"
   }
