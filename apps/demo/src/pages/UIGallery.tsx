@@ -450,6 +450,10 @@ function GalleryContent() {
             </div>
           )}
         </div>
+
+        {/* ── Native Kit (M1) ── */}
+        <div style={section}>
+          <div style={sectionTitle}>Native Kit</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
               <div style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-text-muted)', marginBottom: '0.5rem' }}>

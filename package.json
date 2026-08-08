@@ -13,7 +13,7 @@
     "url": "https://github.com/zeeplabs/zeep-native-kit/issues"
   },
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm --filter './packages/**' build",
     "dev": "pnpm -r dev",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
