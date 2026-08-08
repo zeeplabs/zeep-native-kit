@@ -35,14 +35,16 @@ Goal: any app can call the user's local AI CLI in 3 lines.
 - [x] AIText utilities (stripFences, truncate, firstLine, extractJson)
 - [x] Demo: AI section in UIGallery with provider picker, prompt input, streaming response
 
-### M5 · Umbrella + Docs (v1.0)
+### M5 · Umbrella + Docs (v1.0) ✅
 Goal: stable public API, full docs, published to npm + crates.io.
 
 - [x] **zeep-kit** umbrella package — `@zeeptech/kit` barrel re-exportando todos os módulos
 - [x] `configure()` top-level API — `zeep_kit::Builder::install(tauri::Builder)`
 - [x] README + API docs (TypeDoc + rustdoc)
 - [x] Migration guide from raw Tauri
-- [ ] Publish v1.0.0
+- [x] Opensource governance: LICENSE-MIT/APACHE, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, README em inglês + i18n (pt-BR, es)
+- [x] npm scope corrigido `@zeep` → `@zeeptech` antes do publish (D21)
+- [x] **Publish v1.0.0** (2026-08-08) — 6 pacotes npm (`@zeeptech/*`) + 5 crates (`zeep-*`) publicados. Trusted Publisher configurado nos 6. GitHub Release `v1.0.0` com changelog gerado via `git log`. `ci.yml`/`release.yml` corrigidos e verdes pela primeira vez de verdade (5 bugs reais de CI, ver STATE.md) + 49 runs falhas antigas apagadas do histórico do Actions
 
 ---
 
@@ -71,5 +73,5 @@ Goal: stable public API, full docs, published to npm + crates.io.
 | configure() top-level API | zeep-kit | M5 | **done** |
 | CI pipeline | infra | M1 | **done** |
 | Changesets release | infra | M1 | **done** |
-| README + API docs | docs | M5 | pending |
-| Publish v1.0.0 | release | M5 | pending |
+| README + API docs | docs | M5 | **done** |
+| Publish v1.0.0 | release | M5 | **done** |
