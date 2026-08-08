@@ -3,6 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "description": "Development kit for ZeepFly Tauri apps — design system, Rust commands, local AI",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeeplabs/zeep-native-kit.git"
+  },
+  "homepage": "https://github.com/zeeplabs/zeep-native-kit#readme",
+  "bugs": {
+    "url": "https://github.com/zeeplabs/zeep-native-kit/issues"
+  },
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm -r dev",

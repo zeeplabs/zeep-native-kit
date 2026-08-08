@@ -1,11 +1,38 @@
 # zeep-native-kit
 
-**Desenvolvimento desktop-first para apps Tauri v2 + React + Rust.**
+[![CI](https://github.com/zeeplabs/zeep-native-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/zeeplabs/zeep-native-kit/actions/workflows/ci.yml)
+[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](package.json)
+[![Rust](https://img.shields.io/badge/rust-%3E%3D1.80-orange?logo=rust)](src-tauri/Cargo.toml)
+[![Tauri v2](https://img.shields.io/badge/tauri-v2-24C8DB?logo=tauri&logoColor=white)](https://tauri.app)
 
-zeep-native-kit dá a qualquer app Tauri um baseline polished em uma chamada — design system premium, comandos Rust prontos (keychain, prefs, shell), logger estruturado, auto-updater, e integração com AI local (sem API key).
+**English** | [Português](i18n/README.pt-BR.md) | [Español](i18n/README.es.md)
+
+**Desktop-first development kit for Tauri v2 + React + Rust apps.**
+
+zeep-native-kit gives any Tauri app a polished baseline in one call — premium design system, ready-made Rust commands (keychain, prefs, shell), structured logger, auto-updater, and local AI integration (no API key required).
+
+> **Status: pre-release.** The packages (`@zeep/*` on npm, `zeep-*` crates on crates.io) have **not been published** to public registries yet. All code is stable and tested in CI, but today it's only consumable via local workspace or by cloning the repository — see [Installation](#installation--publication-status).
+
+## Table of Contents
+
+- [Stack](#stack)
+- [Installation / Publication Status](#installation--publication-status)
+- [Quick Start](#quick-start)
+- [Architecture](#architecture)
+- [Modules](#modules)
+- [Migration Guide](#migration-guide-raw-tauri--zeep-native-kit)
+- [Release Flow](#release-flow)
+- [Development](#development)
+- [Project Structure](#project-structure)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Security](#security)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
 
 ```rust
-// main.rs — app Tauri completo com zeep-native-kit
+// main.rs — a complete Tauri app with zeep-native-kit
 fn main() {
     zeep_kit::Builder::new()
         .namespace("dev.myapp")
@@ -18,7 +45,7 @@ fn main() {
 ```
 
 ```tsx
-// App.tsx — frontend com design system + todos os módulos
+// App.tsx — frontend with design system + every module
 import { ZeepProvider, Button, LogViewer, useUpdater } from '@zeep/kit';
 
 function App() {
@@ -44,19 +71,41 @@ function App() {
 | Testing (Rust) | `cargo test` |
 | Release | Changesets + GitHub Actions |
 
-## Quick Start
+## Installation / Publication Status
 
-### From scratch
+The packages are not published to npm or crates.io yet ([see Release Flow](#release-flow)). Until then, use one of the paths below:
+
+**1. Local workspace (recommended today)** — clone the repo and add it as a `workspace:*` dependency inside a pnpm monorepo, the same way `apps/demo` does:
+
+```jsonc
+// your app's package.json
+{
+  "dependencies": {
+    "@zeep/kit": "workspace:*"
+  }
+}
+```
+
+```toml
+# Cargo.toml
+[dependencies]
+zeep-kit = { path = "../zeep-native-kit/src-tauri/crates/zeep-kit" }
+```
+
+**2. After the first publication** — once the packages are published (watch [Releases](https://github.com/zeeplabs/zeep-native-kit/releases)):
 
 ```bash
 pnpm add @zeep/kit
 ```
 
-Add to your `Cargo.toml`:
 ```toml
 [dependencies]
 zeep-kit = "1.0"
 ```
+
+## Quick Start
+
+### From scratch
 
 Wire it up:
 ```rust
@@ -96,7 +145,7 @@ zeep_kit::Builder::new()
 └───────┘ └─────┘ └─────┘ └─────┘ └─────────┘
        ┌─────────────────────────────────────┐
        │          @zeep/kit (barrel)          │
-       │   re-exporta todos os packages       │
+       │   re-exports every package           │
        └─────────────────────────────────────┘
 
 ┌──────────┐┌──────────┐┌──────────┐┌────────┐
@@ -159,7 +208,7 @@ const theme = await prefsGet('theme');
 
 ### Keychain (`zeep-core`)
 
-Secure credential storage via `keyring` crate (macOS Keychain, Windows Credential Manager, Linux Secret Service).
+Secure credential storage via the `keyring` crate (macOS Keychain, Windows Credential Manager, Linux Secret Service).
 
 ```rust
 use zeep_core::keychain::Keychain;
@@ -172,7 +221,7 @@ kc.delete("api-token")?;
 
 ### Shell (`zeep-core`)
 
-PATH-resolved command execution with streaming support. Resolves binaries manually (Tauri sandbox doesn't inherit full PATH on macOS).
+PATH-resolved command execution with streaming support. Resolves binaries manually (Tauri's sandbox doesn't inherit the full PATH on macOS).
 
 ```rust
 use zeep_core::shell::ShellRunner;
@@ -469,12 +518,12 @@ function MyApp() {
 
 ## Release Flow
 
-1. Create changeset:
+1. Create a changeset:
    ```bash
    pnpm changeset
    ```
-2. Commit and push PR to `main`
-3. After merge, bump versions and generate changelogs:
+2. Commit and push a PR to `main`
+3. After merging, bump versions and generate changelogs:
    ```bash
    pnpm version-packages
    git add . && git commit -m "chore: bump versions"
@@ -484,7 +533,9 @@ function MyApp() {
    git tag v0.1.0
    git push --tags
    ```
-5. GitHub Actions publishes to npm.
+5. GitHub Actions publishes to npm (via [Trusted Publishing](https://docs.npmjs.com/trusted-publishers), no `NPM_TOKEN`) and the crates to crates.io.
+
+> Note: for a **new** package/crate (first publication), the Trusted Publisher must be configured manually on npmjs.com/crates.io before the release — trusted publishing can only be linked to a package that already exists in the registry. The first `publish` of each package is manual; subsequent releases are automated via CI.
 
 ## Development
 
@@ -538,10 +589,41 @@ zeep-native-kit/
 │       └── kit/            # Barrel re-exports
 ├── apps/
 │   └── demo/               # Tauri demo app
+├── i18n/                   # Translated READMEs (pt-BR, es)
 └── docs/
     └── superpowers/        # Design docs + plans
 ```
 
+## Roadmap
+
+Detailed roadmap is kept internally in `.specs/project/ROADMAP.md`. At a high level:
+
+- [x] Stable core modules: Prefs, Keychain, Shell, Logger, Updater, AI, UI (API-stable in the 1.0 line)
+- [x] CI (clippy + cargo test + Vitest + type-check) via GitHub Actions
+- [x] Release flow via Changesets + npm Trusted Publishing
+- [ ] First public publication to npm and crates.io
+- [ ] Cross-platform CI (Linux/Windows), currently `macos-latest` only
+- [ ] Real per-package `lint` script (currently a no-op at the root)
+
+Roadmap suggestions are welcome via [issues](https://github.com/zeeplabs/zeep-native-kit/issues).
+
+## Contributing
+
+Contributions are welcome. See the full guide in [CONTRIBUTING.md](CONTRIBUTING.md) — covers environment setup, development workflow, changeset convention, and PR checklist.
+
+## Security
+
+To report vulnerabilities, **do not open a public issue** — follow the process in [SECURITY.md](SECURITY.md) (GitHub Security Advisories).
+
+## Code of Conduct
+
+This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md).
+
 ## License
 
-MIT OR Apache-2.0
+Dual-licensed, at your option:
+
+- [MIT license](LICENSE-MIT)
+- [Apache License, Version 2.0](LICENSE-APACHE)
+
+Unless explicitly stated otherwise, any contribution intentionally submitted for inclusion in the project shall be licensed as above, without any additional terms or conditions.
