@@ -8,7 +8,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -44,7 +46,7 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # No NPM_TOKEN: each @zeep/* package must have a Trusted Publisher
+      # No NPM_TOKEN: each @zeeptech/* package must have a Trusted Publisher
       # configured on npmjs.com (Package Settings -> Trusted Publisher) pointing
       # at this repo + workflow file before this step can succeed. First
       # publish of a brand-new package is done manually (`npm publish`),
@@ -66,3 +68,28 @@ jobs:
               echo "$crate already published at this version, skipping"
             }
           done
+
+      - name: Generate changelog from commits
+        id: changelog
+        run: |
+          set -e
+          PREV_TAG=$(git tag --sort=-creatordate | grep -v "^${{ github.ref_name }}$" | head -n 1 || true)
+          {
+            echo "body<<CHANGELOG_EOF"
+            if [ -n "$PREV_TAG" ]; then
+              echo "## Commits since $PREV_TAG"
+              echo
+              git log "$PREV_TAG..${{ github.sha }}" --pretty=format:"- %s (%h)" --no-merges
+            else
+              echo "## Commits"
+              echo
+              git log "${{ github.sha }}" --pretty=format:"- %s (%h)" --no-merges
+            fi
+            echo
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.changelog.outputs.body }}
