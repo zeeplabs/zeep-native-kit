@@ -39,7 +39,7 @@ jobs:
       # Trusted Publishing needs npm >= 11.5.1 to mint the OIDC-backed token;
       # the version bundled with actions/setup-node's Node 20 is older.
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11
 
       - name: Build
         run: pnpm build
