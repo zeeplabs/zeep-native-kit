@@ -12,7 +12,7 @@
 
 zeep-native-kit gives any Tauri app a polished baseline in one call — premium design system, ready-made Rust commands (keychain, prefs, shell), structured logger, auto-updater, and local AI integration (no API key required).
 
-> **Status: pre-release.** The packages (`@zeeptech/*` on npm, `zeep-*` crates on crates.io) have **not been published** to public registries yet. All code is stable and tested in CI, but today it's only consumable via local workspace or by cloning the repository — see [Installation](#installation--publication-status).
+> **Status: published.** The packages (`@zeeptech/*` on [npm](https://www.npmjs.com/org/zeeptech), `zeep-*` crates on [crates.io](https://crates.io/search?q=zeep-)) are live as of `v1.0.0` — see [Installation](#installation--publication-status).
 
 ## Table of Contents
 
@@ -73,9 +73,19 @@ function App() {
 
 ## Installation / Publication Status
 
-The packages are not published to npm or crates.io yet ([see Release Flow](#release-flow)). Until then, use one of the paths below:
+The packages are published and installable today:
 
-**1. Local workspace (recommended today)** — clone the repo and add it as a `workspace:*` dependency inside a pnpm monorepo, the same way `apps/demo` does:
+```bash
+pnpm add @zeeptech/kit
+```
+
+```toml
+# Cargo.toml
+[dependencies]
+zeep-kit = "1.0"
+```
+
+**Local workspace (for contributing to this repo)** — add it as a `workspace:*` dependency inside this pnpm monorepo, the same way `apps/demo` does:
 
 ```jsonc
 // your app's package.json
@@ -90,17 +100,6 @@ The packages are not published to npm or crates.io yet ([see Release Flow](#rele
 # Cargo.toml
 [dependencies]
 zeep-kit = { path = "../zeep-native-kit/src-tauri/crates/zeep-kit" }
-```
-
-**2. After the first publication** — once the packages are published (watch [Releases](https://github.com/zeeplabs/zeep-native-kit/releases)):
-
-```bash
-pnpm add @zeeptech/kit
-```
-
-```toml
-[dependencies]
-zeep-kit = "1.0"
 ```
 
 ## Quick Start
@@ -137,24 +136,24 @@ zeep_kit::Builder::new()
 │          (Tauri app + React gallery)         │
 └──────┬──────┬──────┬──────┬──────┬──────────┘
        │      │      │      │      │
-┌──────▼┐ ┌──▼──┐ ┌─▼───┐ ┌─▼───┐ ┌─▼───────┐
-│@zeeptech/ │ │@zeep│ │@zeep│ │@zeep│ │@zeeptech/   │
-│core   │ │/ui  │ │/log │ │/upd │ │ai       │
-│(invoke│ │     │ │ger  │ │ater │ │(useAI,  │
-│wraps) │ │     │ │     │ │     │ │comps)   │
-└───────┘ └─────┘ └─────┘ └─────┘ └─────────┘
-       ┌─────────────────────────────────────┐
-       │          @zeeptech/kit (barrel)          │
-       │   re-exports every package           │
-       └─────────────────────────────────────┘
+┌───────────┐┌──────────┐┌──────────┐┌──────────┐┌───────────┐
+│@zeeptech/ ││@zeeptech/││@zeeptech/││@zeeptech/││@zeeptech/ │
+│core       ││ui        ││logger    ││updater   ││ai         │
+│(invoke    ││          ││          ││          ││(useAI,    │
+│wraps)     ││          ││          ││          ││comps)     │
+└───────────┘└──────────┘└──────────┘└──────────┘└───────────┘
+       ┌───────────────────────────────────────┐
+       │        @zeeptech/kit (barrel)          │
+       │     re-exports every package           │
+       └───────────────────────────────────────┘
 
-┌──────────┐┌──────────┐┌──────────┐┌────────┐
-│zeep-core  ││zeep-log  ││zeep-upd  ││zeep-ai │
-│(Prefs,   ││ger       ││ater      ││(detect,│
-│Keychain, ││(struct   ││(semver   ││runner, │
-│Shell)    ││logs,     ││gate,     ││adapters)│
-│          ││rotation) ││commands) ││        │
-└──────────┘└──────────┘└──────────┘└────────┘
+┌──────────┐┌──────────┐┌──────────┐┌──────────┐
+│zeep-core ││zeep-     ││zeep-     ││zeep-ai   │
+│(Prefs,   ││logger    ││updater   ││(detect,  │
+│Keychain, ││(struct   ││(semver   ││runner,   │
+│Shell)    ││logs,     ││gate,     ││adapters) │
+│          ││rotation) ││commands) ││          │
+└──────────┘└──────────┘└──────────┘└──────────┘
        ┌─────────────────────────────────────┐
        │        zeep-kit (umbrella crate)     │
        │   Builder + install() API            │
@@ -601,7 +600,7 @@ Detailed roadmap is kept internally in `.specs/project/ROADMAP.md`. At a high le
 - [x] Stable core modules: Prefs, Keychain, Shell, Logger, Updater, AI, UI (API-stable in the 1.0 line)
 - [x] CI (clippy + cargo test + Vitest + type-check) via GitHub Actions
 - [x] Release flow via Changesets + npm Trusted Publishing
-- [ ] First public publication to npm and crates.io
+- [x] First public publication to npm and crates.io (`v1.0.0`)
 - [ ] Cross-platform CI (Linux/Windows), currently `macos-latest` only
 - [ ] Real per-package `lint` script (currently a no-op at the root)
 
