@@ -1,6 +1,6 @@
 {
   "name": "@zeeptech/ai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI integration components and utilities for zeep-native-kit",
   "type": "module",
   "license": "MIT OR Apache-2.0",

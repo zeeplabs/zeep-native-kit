@@ -1,5 +1,14 @@
 # zeep-demo
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [d7e2cce]
+  - @zeeptech/ui@1.2.0
+  - @zeeptech/logger@1.0.1
+  - @zeeptech/ai@1.0.1
+
 ## 0.1.2
 
 ### Patch Changes
