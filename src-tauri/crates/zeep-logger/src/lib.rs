@@ -34,6 +34,33 @@ pub enum LogTarget {
 }
 
 struct RingState(Arc<RwLock<VecDeque<LogEntry>>>);
+/// Numeric level codes shared with the frontend (`LOG_LEVEL_VALUES` in
+/// `@zeeptech/logger`) and `logger_set_level`: Trace=1 .. Error=5. `0` is `Off`
+/// and is only used internally. This is deliberately NOT `LevelFilter as u8`,
+/// which is numbered the other way around (Error=1 .. Trace=5).
+fn level_to_code(level: log::LevelFilter) -> u8 {
+    match level {
+        log::LevelFilter::Off => 0,
+        log::LevelFilter::Trace => 1,
+        log::LevelFilter::Debug => 2,
+        log::LevelFilter::Info => 3,
+        log::LevelFilter::Warn => 4,
+        log::LevelFilter::Error => 5,
+    }
+}
+
+fn code_to_level(code: u8) -> Option<log::LevelFilter> {
+    match code {
+        0 => Some(log::LevelFilter::Off),
+        1 => Some(log::LevelFilter::Trace),
+        2 => Some(log::LevelFilter::Debug),
+        3 => Some(log::LevelFilter::Info),
+        4 => Some(log::LevelFilter::Warn),
+        5 => Some(log::LevelFilter::Error),
+        _ => None,
+    }
+}
+
 struct LevelState(Arc<AtomicU8>);
 
 fn build_json_entry(level: log::Level, target: &str, message: &Arguments<'_>) -> LogEntry {
@@ -236,7 +263,7 @@ impl Builder {
     pub fn build<R: Runtime>(self) -> TauriPlugin<R> {
         let ring = Arc::new(RwLock::new(VecDeque::new()));
         let ring_cmd = ring.clone();
-        let level_atomic = Arc::new(AtomicU8::new(self.level as u8));
+        let level_atomic = Arc::new(AtomicU8::new(level_to_code(self.level)));
         let level_cmd = level_atomic.clone();
         let (tx, rx) = tokio::sync::mpsc::unbounded_channel::<LogEntry>();
 
@@ -322,14 +349,9 @@ impl Builder {
 
                 let (_, logger) = dispatch.into_log();
                 log::set_boxed_logger(logger)?;
-                log::set_max_level(match level_cmd.load(Ordering::Relaxed) {
-                    1 => log::LevelFilter::Trace,
-                    2 => log::LevelFilter::Debug,
-                    3 => log::LevelFilter::Info,
-                    4 => log::LevelFilter::Warn,
-                    5 => log::LevelFilter::Error,
-                    _ => log::LevelFilter::Debug,
-                });
+                log::set_max_level(
+                    code_to_level(level_cmd.load(Ordering::Relaxed)).unwrap_or(level_filter),
+                );
 
                 Ok(())
             })
@@ -352,16 +374,12 @@ fn logger_set_level(
     level_state: tauri::State<'_, LevelState>,
     level: u8,
 ) -> Result<(), String> {
-    let new_level = match level {
-        1 => log::LevelFilter::Trace,
-        2 => log::LevelFilter::Debug,
-        3 => log::LevelFilter::Info,
-        4 => log::LevelFilter::Warn,
-        5 => log::LevelFilter::Error,
-        _ => return Err(format!("invalid log level: {level}")),
-    };
+    // 0 (Off) is internal only; the public range is 1..=5.
+    let new_level = code_to_level(level)
+        .filter(|l| *l != log::LevelFilter::Off)
+        .ok_or_else(|| format!("invalid log level: {level}"))?;
 
-    level_state.0.store(new_level as u8, Ordering::Relaxed);
+    level_state.0.store(level_to_code(new_level), Ordering::Relaxed);
     log::set_max_level(new_level);
 
     log::info!(target: "zeep-logger", "log level changed to {new_level}");
@@ -405,6 +423,31 @@ pub fn cleanup_old_logs<R: Runtime>(app: &AppHandle<R>, days: u64) -> io::Result
 mod tests {
     use super::*;
     use tauri::plugin::Plugin as _;
+
+    #[test]
+    fn level_codes_match_the_frontend_contract() {
+        // Must stay in sync with LOG_LEVEL_VALUES in @zeeptech/logger.
+        assert_eq!(level_to_code(log::LevelFilter::Trace), 1);
+        assert_eq!(level_to_code(log::LevelFilter::Debug), 2);
+        assert_eq!(level_to_code(log::LevelFilter::Info), 3);
+        assert_eq!(level_to_code(log::LevelFilter::Warn), 4);
+        assert_eq!(level_to_code(log::LevelFilter::Error), 5);
+    }
+
+    #[test]
+    fn level_codes_round_trip_for_every_level() {
+        for level in [
+            log::LevelFilter::Off,
+            log::LevelFilter::Error,
+            log::LevelFilter::Warn,
+            log::LevelFilter::Info,
+            log::LevelFilter::Debug,
+            log::LevelFilter::Trace,
+        ] {
+            assert_eq!(code_to_level(level_to_code(level)), Some(level));
+        }
+        assert_eq!(code_to_level(6), None);
+    }
 
     #[test]
     fn development_preset_builds_a_plugin() {
