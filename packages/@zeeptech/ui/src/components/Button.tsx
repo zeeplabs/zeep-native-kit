@@ -43,11 +43,11 @@ const BUTTON_CSS = `
   background: rgba(255,255,255,0.06);
 }
 .zeep-btn-danger {
-  background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--zeep-danger, #ef4444), color-mix(in srgb, var(--zeep-danger, #ef4444) 70%, #000)); color: #fff; border: 1px solid transparent;
 }
 .zeep-btn-danger:hover:not(:disabled):not([aria-disabled="true"]) {
-  background: linear-gradient(135deg, #f87171, #ef4444);
-  box-shadow: 0 0 16px rgba(239,68,68,0.4);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--zeep-danger, #ef4444) 80%, #fff), var(--zeep-danger, #ef4444));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--zeep-danger, #ef4444) 40%, transparent);
 }
 
 @keyframes zeep-spin { to { transform: rotate(360deg); } }

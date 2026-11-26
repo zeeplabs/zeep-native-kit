@@ -19,10 +19,10 @@ export const LOG_LEVEL_VALUES: Record<LogLevel, number> = {
 
 export const LOG_LEVEL_COLORS: Record<LogLevel, string> = {
   Trace: '#999',
-  Debug: '#3b82f6',
-  Info: '#22c55e',
-  Warn: '#eab308',
-  Error: '#ef4444',
+  Debug: 'var(--zeep-info, #3b82f6)',
+  Info: 'var(--zeep-success, #22c55e)',
+  Warn: 'var(--zeep-warning, #eab308)',
+  Error: 'var(--zeep-danger, #ef4444)',
 };
 
 export function parseLevel(s: string): LogLevel | undefined {

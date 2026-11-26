@@ -4,7 +4,7 @@ const STYLE_ID = 'zeep-status-dot-styles';
 
 const DOT_CSS = `
 @keyframes zeep-dot-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 var(--zeep-dot-color, #22c55e); }
+  0%, 100% { box-shadow: 0 0 0 0 var(--zeep-dot-color, var(--zeep-success, #22c55e)); }
   50%       { box-shadow: 0 0 0 4px transparent; }
 }
 .zeep-dot-pulse { animation: zeep-dot-pulse 2s ease-in-out infinite; }
@@ -14,10 +14,10 @@ const DOT_CSS = `
 `;
 
 const STATUS_COLORS: Record<string, string> = {
-  online: '#22c55e',
+  online: 'var(--zeep-success, #22c55e)',
   offline: '#6b7280',
-  busy: '#ef4444',
-  away: '#eab308',
+  busy: 'var(--zeep-danger, #ef4444)',
+  away: 'var(--zeep-warning, #eab308)',
 };
 
 export type DotStatus = keyof typeof STATUS_COLORS;

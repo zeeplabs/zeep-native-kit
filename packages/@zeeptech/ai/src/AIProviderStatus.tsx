@@ -24,8 +24,8 @@ const CSS = `
   border-radius: 50%;
   flex-shrink: 0;
 }
-.zeep-ai-provider-dot.online { background: #22c55e; }
-.zeep-ai-provider-dot.offline { background: #ef4444; }
+.zeep-ai-provider-dot.online { background: var(--zeep-success, #22c55e); }
+.zeep-ai-provider-dot.offline { background: var(--zeep-danger, #ef4444); }
 .zeep-ai-provider-name {
   font-weight: 600;
   color: var(--zeep-text, #e4e4e7);

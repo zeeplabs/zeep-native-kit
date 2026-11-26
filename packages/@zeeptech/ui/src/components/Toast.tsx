@@ -50,10 +50,10 @@ const ICONS: Record<string, string> = {
 };
 
 const ICON_COLORS: Record<string, string> = {
-  success: '#22c55e',
-  error: '#ef4444',
-  info: '#3b82f6',
-  warning: '#eab308',
+  success: 'var(--zeep-success, #22c55e)',
+  error: 'var(--zeep-danger, #ef4444)',
+  info: 'var(--zeep-info, #3b82f6)',
+  warning: 'var(--zeep-warning, #eab308)',
 };
 
 let nextId = 1;
