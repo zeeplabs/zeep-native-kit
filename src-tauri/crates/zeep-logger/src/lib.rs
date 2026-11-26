@@ -310,7 +310,9 @@ impl Builder {
                 if has_webview {
                     if let Some(mut rx) = rx.take() {
                         let app_handle = app.app_handle().clone();
-                        tokio::spawn(async move {
+                        // Tauri runs plugin `setup` outside any Tokio runtime, so
+                        // `tokio::spawn` panics here. Use Tauri's own runtime.
+                        tauri::async_runtime::spawn(async move {
                             while let Some(entry) = rx.recv().await {
                                 let _ = app_handle.emit("log://log", &entry);
                             }
