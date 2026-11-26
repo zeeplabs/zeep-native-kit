@@ -13,8 +13,12 @@ import {
   SkeletonText,
   MarkdownRenderer,
   SearchHighlight,
+  TextField,
+  Checkbox,
+  Table,
+  Tabs,
 } from '@zeeptech/ui';
-import type { AccentTheme, Theme } from '@zeeptech/ui';
+import type { AccentTheme, TableColumn, Theme } from '@zeeptech/ui';
 import { prefsGet, prefsSet, keychainGet, keychainSet, shellWhich } from '@zeeptech/core';
 import { LogViewer, LogLevelSelector, useLogEvents } from '@zeeptech/logger';
 import { useUpdater, UpdateBanner, UpdateProgress, UpdateReadyDialog } from '@zeeptech/updater';
@@ -46,6 +50,23 @@ console.log(msg);
 
 > Built for Tauri desktop apps with the Zeep design system.
 `;
+
+interface CatalogRow {
+  id: string;
+  name: string;
+  windows: boolean;
+  macos: boolean;
+  linux: boolean;
+}
+
+const CATALOG: CatalogRow[] = [
+  { id: 'git', name: 'Git', windows: true, macos: true, linux: true },
+  { id: 'node', name: 'Node.js 20', windows: true, macos: true, linux: true },
+  { id: 'xcode', name: 'Xcode', windows: false, macos: true, linux: false },
+  { id: 'wsl', name: 'WSL 2', windows: true, macos: false, linux: false },
+];
+
+const ACCESS_ITEMS = ['GitHub', 'Slack', 'Jira', 'AWS'];
 
 const page: CSSProperties = {
   background: 'var(--zeep-bg)',
@@ -111,6 +132,27 @@ function GalleryContent() {
   const ai = useAI();
   const [selectedProvider, setSelectedProvider] = useState('');
   const [aiVisible, setAiVisible] = useState(false);
+  const [devEmail, setDevEmail] = useState('');
+  const [access, setAccess] = useState<boolean[]>([true, false, false, false]);
+  const [catalogFilter, setCatalogFilter] = useState('');
+  const allAccess = access.every(Boolean);
+  const someAccess = access.some(Boolean);
+  const emailError = devEmail !== '' && !devEmail.includes('@') ? 'E-mail inválido' : undefined;
+  const filteredCatalog = CATALOG.filter(r => r.name.toLowerCase().includes(catalogFilter.toLowerCase()));
+  const installCell = (supported: boolean, row: CatalogRow, os: string) =>
+    supported ? (
+      <Button size="sm" variant="secondary" onClick={() => { toast.info(`Instalar ${row.name} (${os})`); }}>
+        Instalar
+      </Button>
+    ) : (
+      <span style={{ color: 'var(--zeep-text-muted)' }} aria-label="Não suportado">—</span>
+    );
+  const catalogColumns: TableColumn<CatalogRow>[] = [
+    { key: 'name', header: 'Software', render: r => r.name, isRowHeader: true },
+    { key: 'windows', header: 'Windows', align: 'center', render: r => installCell(r.windows, r, 'Windows') },
+    { key: 'macos', header: 'macOS', align: 'center', render: r => installCell(r.macos, r, 'macOS') },
+    { key: 'linux', header: 'Linux', align: 'center', render: r => installCell(r.linux, r, 'Linux') },
+  ];
 
   useEffect(() => { console.log('zeep-ui Gallery mounted'); }, []);
 
@@ -274,6 +316,88 @@ function GalleryContent() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* ── TextField ── */}
+        <div style={section}>
+          <div style={sectionTitle}>TextField</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+            <TextField
+              label="E-mail do dev"
+              type="email"
+              placeholder="nome@empresa.com"
+              hint="Usado para enviar os convites de acesso"
+              value={devEmail}
+              onChange={e => { setDevEmail(e.target.value); }}
+              error={emailError}
+              required
+            />
+            <TextField label="Nome completo" defaultValue="Erro forçado" error="Campo obrigatório" />
+            <TextField label="Matrícula" defaultValue="0042" disabled hint="Gerada automaticamente" />
+            <TextField label="Buscar" hideLabel size="sm" placeholder="Buscar (label oculto)" />
+          </div>
+        </div>
+
+        {/* ── Checkbox ── */}
+        <div style={section}>
+          <div style={sectionTitle}>Checkbox</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <Checkbox
+              label="Todos os acessos"
+              checked={allAccess}
+              indeterminate={someAccess && !allAccess}
+              onChange={() => { setAccess(access.map(() => !allAccess)); }}
+            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingLeft: '1.5rem' }}>
+              {ACCESS_ITEMS.map((name, i) => (
+                <Checkbox
+                  key={name}
+                  label={name}
+                  checked={access[i] ?? false}
+                  onChange={() => { setAccess(access.map((v, j) => (j === i ? !v : v))); }}
+                />
+              ))}
+            </div>
+            <Checkbox label="Acesso VPN" hint="Requer aprovação do gestor" />
+            <Checkbox label="Aceito a política de segurança" error="Obrigatório para continuar" />
+            <Checkbox label="Desabilitado" disabled defaultChecked />
+          </div>
+        </div>
+
+        {/* ── Table ── */}
+        <div style={section}>
+          <div style={sectionTitle}>Table</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <TextField
+              label="Filtrar catálogo"
+              hideLabel
+              size="sm"
+              placeholder="Filtrar catálogo (digite algo sem match para ver o estado vazio)"
+              value={catalogFilter}
+              onChange={e => { setCatalogFilter(e.target.value); }}
+            />
+            <Table
+              aria-label="Catálogo de software"
+              columns={catalogColumns}
+              rows={filteredCatalog}
+              getRowKey={r => r.id}
+              emptyState="Nenhum software encontrado"
+            />
+          </div>
+        </div>
+
+        {/* ── Tabs ── */}
+        <div style={section}>
+          <div style={sectionTitle}>Tabs</div>
+          <Tabs
+            aria-label="Seções do Nexus"
+            items={[
+              { id: 'catalog', label: 'Catálogo', content: <p style={{ color: 'var(--zeep-text-muted)' }}>Softwares disponíveis por SO.</p> },
+              { id: 'admissions', label: 'Admissões', content: <p style={{ color: 'var(--zeep-text-muted)' }}>Devs em onboarding.</p> },
+              { id: 'profiles', label: 'Perfis', content: <p style={{ color: 'var(--zeep-text-muted)' }}>Perfis de acesso por squad.</p> },
+              { id: 'audit', label: 'Auditoria', content: null, disabled: true },
+            ]}
+          />
         </div>
 
         {/* ── Toast ── */}
