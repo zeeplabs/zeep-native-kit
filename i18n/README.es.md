@@ -251,6 +251,19 @@ zeep_kit::Builder::new()
 
 Comandos: `logger_set_level(level: u8)` — cambia el nivel de log en runtime. `logger_get_entries()` — obtiene las últimas 1000 entradas.
 
+**Enmascarar secretos (redactor):** `Builder::redactor` (o `zeep_kit::Builder::log_redactor`) permite reescribir cada entrada antes de que llegue a cualquier salida: ring buffer, el evento `log://log` del webview, stdout/stderr y archivos.
+
+```rust
+zeep_kit::Builder::new()
+    .log_prod()
+    .log_redactor(|entry| {
+        entry.message = entry.message.replace(&my_token, "[REDACTED]");
+    })
+    .install(tauri::Builder::default());
+```
+
+Es un filtro de mejor esfuerzo sobre el texto del log, **no una barrera de seguridad**: solo ve lo que pasa por este logger y solo enmascara lo que tu código reconoce, así que es mejor no registrar secretos. Se ejecuta en el hilo que registra, para cada entrada que supera el filtro de nivel (mantenlo rápido), y si entra en pánico el mensaje se reemplaza por un texto fijo en lugar de registrarse sin máscara.
+
 **Frontend:**
 ```tsx
 import { LogViewer, LogLevelSelector, useLogEvents } from '@zeeptech/kit';

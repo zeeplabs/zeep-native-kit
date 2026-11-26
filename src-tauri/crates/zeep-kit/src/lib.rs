@@ -9,6 +9,9 @@ use zeep_core::prefs::{PrefsState, PrefsStore};
 use zeep_core::shell::{ShellRunner, ShellState};
 
 pub use zeep_core;
+pub use zeep_logger;
+
+type LogRedactor = Arc<dyn Fn(&mut zeep_logger::LogEntry) + Send + Sync + 'static>;
 
 enum LogConfig {
     Dev,
@@ -21,6 +24,7 @@ pub struct Builder {
     log_config: Option<LogConfig>,
     updater_pubkey: Option<String>,
     ai_enabled: bool,
+    log_redactor: Option<LogRedactor>,
 }
 
 impl Builder {
@@ -32,6 +36,7 @@ impl Builder {
             updater_pubkey: None,
             // Registered by default in 1.x for backwards compatibility.
             ai_enabled: true,
+            log_redactor: None,
         }
     }
 
@@ -65,6 +70,28 @@ impl Builder {
     /// explicitly if you rely on it.
     pub fn ai(mut self, enabled: bool) -> Self {
         self.ai_enabled = enabled;
+        self
+    }
+
+    /// Rewrite every log entry before it reaches any output (ring buffer, webview,
+    /// stdout/files), e.g. to mask tokens or credentials. Only applies when the
+    /// logger is enabled with [`log_dev`](Self::log_dev) or [`log_prod`](Self::log_prod).
+    ///
+    /// Best effort over log text, not a security boundary; see
+    /// [`zeep_logger::Builder::redactor`] for the details (runs on the logging
+    /// thread, fails closed if it panics).
+    ///
+    /// ```no_run
+    /// zeep_kit::Builder::new()
+    ///     .log_prod()
+    ///     .log_redactor(|entry| entry.message = entry.message.replace("hunter2", "[REDACTED]"))
+    ///     .install(tauri::Builder::default());
+    /// ```
+    pub fn log_redactor<F>(mut self, redact: F) -> Self
+    where
+        F: Fn(&mut zeep_logger::LogEntry) + Send + Sync + 'static,
+    {
+        self.log_redactor = Some(Arc::new(redact));
         self
     }
 
@@ -131,7 +158,7 @@ impl Builder {
     ///     .install(tauri::Builder::default());
     /// ```
     pub fn install<R: Runtime>(self, mut builder: tauri::Builder<R>) -> tauri::Builder<R> {
-        let Builder { namespace, shell_cwd, log_config, updater_pubkey, ai_enabled } = self;
+        let Builder { namespace, shell_cwd, log_config, updater_pubkey, ai_enabled, log_redactor } = self;
 
         let core_plugin = {
             let ns = namespace.unwrap_or_else(|| "zeep-app".into());
@@ -177,11 +204,14 @@ impl Builder {
         builder = builder.plugin(core_plugin);
 
         if let Some(config) = log_config {
-            let plugin = match config {
-                LogConfig::Dev => zeep_logger::Builder::development().build(),
-                LogConfig::Prod => zeep_logger::Builder::production().build(),
+            let mut logger = match config {
+                LogConfig::Dev => zeep_logger::Builder::development(),
+                LogConfig::Prod => zeep_logger::Builder::production(),
             };
-            builder = builder.plugin(plugin);
+            if let Some(redact) = log_redactor {
+                logger = logger.redactor(move |entry| redact(entry));
+            }
+            builder = builder.plugin(logger.build());
         }
 
         if let Some(pubkey) = updater_pubkey {
@@ -248,6 +278,35 @@ mod tests {
     #[test]
     fn ai_false_skips_zeep_ai() {
         assert!(!ai_registered(Builder::new().namespace("test-app").ai(false)));
+    }
+
+    /// The logger is process-global (`log::set_boxed_logger`), so this is the only
+    /// test in this binary that enables it.
+    #[test]
+    fn log_redactor_is_applied_to_the_logger_preset() {
+        use std::sync::mpsc;
+        use std::time::Duration;
+        use tauri::test::{mock_builder, mock_context, noop_assets};
+        use tauri::Listener;
+
+        let app = Builder::new()
+            .namespace("test-app")
+            .log_dev()
+            .log_redactor(|entry| entry.message = entry.message.replace("hunter2", "[REDACTED]"))
+            .install(mock_builder())
+            .build(mock_context(noop_assets()))
+            .expect("mock app builds");
+
+        let (tx, rx) = mpsc::channel::<String>();
+        app.listen("log://log", move |event| {
+            let _ = tx.send(event.payload().to_string());
+        });
+
+        log::info!("login password=hunter2");
+
+        let payload = rx.recv_timeout(Duration::from_secs(5)).expect("log event");
+        assert!(!payload.contains("hunter2"), "secret leaked: {payload}");
+        assert!(payload.contains("password=[REDACTED]"), "unexpected: {payload}");
     }
 
     #[test]

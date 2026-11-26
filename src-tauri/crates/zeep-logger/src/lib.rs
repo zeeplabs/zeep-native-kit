@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 use std::fmt::Arguments;
 use std::io::{self, Write};
+use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU8, Ordering};
 use std::sync::{Arc, RwLock};
@@ -74,6 +75,23 @@ fn build_json_entry(level: log::Level, target: &str, message: &Arguments<'_>) ->
         target: target.to_string(),
         message: message.to_string(),
     }
+}
+
+/// Hook that can rewrite a [`LogEntry`] before it reaches any sink.
+type Redactor = Arc<dyn Fn(&mut LogEntry) + Send + Sync + 'static>;
+
+/// What is logged instead of the original message when the redactor panics.
+const REDACTOR_PANIC_MESSAGE: &str = "[log message withheld: redactor panicked]";
+
+/// Runs the redactor, if any. Fails closed: if the redactor panics, the message
+/// is replaced rather than falling back to the (possibly sensitive) original.
+fn apply_redactor(redactor: Option<&Redactor>, mut entry: LogEntry) -> LogEntry {
+    if let Some(redact) = redactor {
+        if catch_unwind(AssertUnwindSafe(|| redact(&mut entry))).is_err() {
+            entry.message = REDACTOR_PANIC_MESSAGE.to_string();
+        }
+    }
+    entry
 }
 
 struct RotatingFile {
@@ -214,6 +232,7 @@ pub struct Builder {
     targets: Vec<LogTarget>,
     max_file_size: u128,
     rotation_strategy: RotationStrategy,
+    redactor: Option<Redactor>,
 }
 
 impl Builder {
@@ -223,6 +242,7 @@ impl Builder {
             targets: vec![LogTarget::Stdout, LogTarget::LogDir(None)],
             max_file_size: 10_000_000,
             rotation_strategy: RotationStrategy::KeepOne,
+            redactor: None,
         }
     }
 
@@ -260,6 +280,34 @@ impl Builder {
         self
     }
 
+    /// Rewrite every log entry before it reaches any output (ring buffer, the
+    /// `log://log` webview event, stdout/stderr and files), e.g. to mask tokens or
+    /// credentials.
+    ///
+    /// The hook runs on the thread that logs, for every entry that passes the level
+    /// filter, so keep it fast. Change `message` (and `target` if needed); changing
+    /// `level` to something other than the usual level names breaks the
+    /// `LogViewer` filters. If the hook panics the message is replaced by a fixed
+    /// placeholder instead of being logged unredacted.
+    ///
+    /// This is a best-effort filter over log text, not a security boundary: it only
+    /// sees what goes through this logger, and it can only mask what your code
+    /// recognizes. Prefer not logging secrets at all.
+    ///
+    /// ```
+    /// let plugin = zeep_logger::Builder::development()
+    ///     .redactor(|entry| entry.message = entry.message.replace("hunter2", "[REDACTED]"))
+    ///     .build::<tauri::Wry>();
+    /// # let _ = plugin;
+    /// ```
+    pub fn redactor<F>(mut self, redact: F) -> Self
+    where
+        F: Fn(&mut LogEntry) + Send + Sync + 'static,
+    {
+        self.redactor = Some(Arc::new(redact));
+        self
+    }
+
     pub fn build<R: Runtime>(self) -> TauriPlugin<R> {
         let ring = Arc::new(RwLock::new(VecDeque::new()));
         let ring_cmd = ring.clone();
@@ -272,6 +320,7 @@ impl Builder {
         let rotation_strategy = self.rotation_strategy.clone();
         let level_filter = self.level;
         let targets = self.targets;
+        let redactor = self.redactor;
         let mut rx = Some(rx);
 
         PluginBuilder::<R>::new("zeep-logger")
@@ -281,11 +330,17 @@ impl Builder {
 
                 let ring_format = ring.clone();
                 let tx_format = tx.clone();
+                let redactor_format = redactor.clone();
 
                 let mut dispatch = fern::Dispatch::new()
                     .level(level_filter)
                     .format(move |out, message, record| {
-                        let entry = build_json_entry(record.level(), record.target(), message);
+                        // Redact first: the same entry feeds the ring buffer, the
+                        // webview channel and the line written to stdout/files.
+                        let entry = apply_redactor(
+                            redactor_format.as_ref(),
+                            build_json_entry(record.level(), record.target(), message),
+                        );
 
                         if let Ok(mut r) = ring_format.write() {
                             if r.len() >= RING_CAPACITY {
@@ -423,6 +478,39 @@ pub fn cleanup_old_logs<R: Runtime>(app: &AppHandle<R>, days: u64) -> io::Result
 mod tests {
     use super::*;
     use tauri::plugin::Plugin as _;
+
+    fn entry(message: &str) -> LogEntry {
+        LogEntry {
+            timestamp: "t".into(),
+            level: "INFO".into(),
+            target: "app".into(),
+            message: message.into(),
+        }
+    }
+
+    #[test]
+    fn no_redactor_leaves_the_entry_untouched() {
+        let out = apply_redactor(None, entry("token=abc"));
+        assert_eq!(out.message, "token=abc");
+    }
+
+    #[test]
+    fn redactor_can_rewrite_the_message() {
+        let r: Redactor = Arc::new(|e: &mut LogEntry| e.message = e.message.replace("abc", "***"));
+        let out = apply_redactor(Some(&r), entry("token=abc"));
+        assert_eq!(out.message, "token=***");
+        assert_eq!(out.level, "INFO");
+    }
+
+    #[test]
+    fn panicking_redactor_withholds_the_message() {
+        // Fail closed: if the redactor panics we must not fall back to the
+        // unredacted text.
+        let r: Redactor = Arc::new(|_: &mut LogEntry| panic!("boom"));
+        let out = apply_redactor(Some(&r), entry("token=abc"));
+        assert_eq!(out.message, REDACTOR_PANIC_MESSAGE);
+        assert!(!out.message.contains("abc"));
+    }
 
     #[test]
     fn level_codes_match_the_frontend_contract() {
