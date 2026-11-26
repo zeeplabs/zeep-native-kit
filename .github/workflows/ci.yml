@@ -74,6 +74,32 @@ jobs:
         working-directory: src-tauri
         run: cargo test --all-features
 
+  # keyring's Windows backend (Credential Manager) was never exercised in CI.
+  # Scoped to the keychain test binary: it checks the native store is wired
+  # (not the mock) and does a real write/read/delete round-trip.
+  rust-windows:
+    name: Rust (Windows keychain)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src-tauri/**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Keychain native store test (includes the ignored round-trip)
+        working-directory: src-tauri
+        run: cargo test -p zeep-core --features keychain --test keychain_native -- --include-ignored
+
   typescript:
     name: TypeScript (tsc)
     runs-on: macos-latest
@@ -148,7 +174,7 @@ jobs:
 
   build:
     name: Build (macOS)
-    needs: [rust, rust-linux, typescript, react18]
+    needs: [rust, rust-linux, rust-windows, typescript, react18]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
