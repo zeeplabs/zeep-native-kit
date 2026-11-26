@@ -20,6 +20,7 @@ pub struct Builder {
     shell_cwd: Option<PathBuf>,
     log_config: Option<LogConfig>,
     updater_pubkey: Option<String>,
+    ai_enabled: bool,
 }
 
 impl Builder {
@@ -29,6 +30,8 @@ impl Builder {
             shell_cwd: None,
             log_config: None,
             updater_pubkey: None,
+            // Registered by default in 1.x for backwards compatibility.
+            ai_enabled: true,
         }
     }
 
@@ -51,6 +54,17 @@ impl Builder {
     /// Enable the logger with the production preset (file rotation, Info level).
     pub fn log_prod(mut self) -> Self {
         self.log_config = Some(LogConfig::Prod);
+        self
+    }
+
+    /// Include or exclude the local AI plugin (`zeep-ai`: CLI detection and runner).
+    ///
+    /// It is registered **by default** in 1.x for backwards compatibility. Apps that
+    /// do not use AI can call `.ai(false)` to skip registering its commands. In the
+    /// next major version the default will become `false`, so call `.ai(true)`
+    /// explicitly if you rely on it.
+    pub fn ai(mut self, enabled: bool) -> Self {
+        self.ai_enabled = enabled;
         self
     }
 
@@ -105,7 +119,8 @@ impl Builder {
 
     /// Register all plugins into a `tauri::Builder` and return it.
     ///
-    /// Registers: core (prefs/keychain/shell), optionally logger + updater + AI.
+    /// Registers: core (prefs/keychain/shell), optionally logger + updater, and the
+    /// AI plugin (on by default, opt out with `.ai(false)`).
     /// The consumer still needs to call `.run(tauri::generate_context!())`.
     ///
     /// ```no_run
@@ -116,7 +131,7 @@ impl Builder {
     ///     .install(tauri::Builder::default());
     /// ```
     pub fn install<R: Runtime>(self, mut builder: tauri::Builder<R>) -> tauri::Builder<R> {
-        let Builder { namespace, shell_cwd, log_config, updater_pubkey } = self;
+        let Builder { namespace, shell_cwd, log_config, updater_pubkey, ai_enabled } = self;
 
         let core_plugin = {
             let ns = namespace.unwrap_or_else(|| "zeep-app".into());
@@ -174,7 +189,11 @@ impl Builder {
             builder = builder.plugin(plugin);
         }
 
-        builder.plugin(zeep_ai::Builder::build())
+        if ai_enabled {
+            builder = builder.plugin(zeep_ai::Builder::build());
+        }
+
+        builder
     }
 }
 
@@ -201,6 +220,34 @@ mod tests {
     #[test]
     fn derives_service_from_custom_namespace() {
         assert_eq!(resolve_keychain_service("acme-app"), "dev.zeep.acme-app");
+    }
+
+    /// Builds a mock app through `install` (so every plugin `setup` really runs)
+    /// and reports whether the `zeep-ai` plugin was registered.
+    fn ai_registered(kit: Builder) -> bool {
+        use tauri::test::{mock_builder, mock_context, noop_assets};
+        let app = kit
+            .install(mock_builder())
+            .build(mock_context(noop_assets()))
+            .expect("mock app builds");
+        // `remove_plugin` reports whether a plugin with that name existed.
+        app.handle().remove_plugin("zeep-ai")
+    }
+
+    #[test]
+    fn registers_zeep_ai_by_default() {
+        // Backwards compatible: 1.x apps that never asked for AI keep getting it.
+        assert!(ai_registered(Builder::new().namespace("test-app")));
+    }
+
+    #[test]
+    fn ai_true_registers_zeep_ai() {
+        assert!(ai_registered(Builder::new().namespace("test-app").ai(true)));
+    }
+
+    #[test]
+    fn ai_false_skips_zeep_ai() {
+        assert!(!ai_registered(Builder::new().namespace("test-app").ai(false)));
     }
 
     #[test]
