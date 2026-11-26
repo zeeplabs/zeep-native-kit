@@ -3,7 +3,7 @@ members = ["crates/*"]
 resolver = "2"
 
 [workspace.package]
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 rust-version = "1.80"
 license = "MIT OR Apache-2.0"
@@ -11,11 +11,11 @@ repository = "https://github.com/zeeplabs/zeep-native-kit"
 authors = ["Zeep Tecnologia"]
 
 [workspace.dependencies]
-zeep-core = { path = "crates/zeep-core", version = "1.0.0" }
-zeep-kit = { path = "crates/zeep-kit", version = "1.0.0" }
-zeep-logger = { path = "crates/zeep-logger", version = "1.0.0" }
-zeep-updater = { path = "crates/zeep-updater", version = "1.0.0" }
-zeep-ai = { path = "crates/zeep-ai", version = "1.0.0" }
+zeep-core = { path = "crates/zeep-core", version = "1.0.1" }
+zeep-kit = { path = "crates/zeep-kit", version = "1.0.1" }
+zeep-logger = { path = "crates/zeep-logger", version = "1.0.1" }
+zeep-updater = { path = "crates/zeep-updater", version = "1.0.1" }
+zeep-ai = { path = "crates/zeep-ai", version = "1.0.1" }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

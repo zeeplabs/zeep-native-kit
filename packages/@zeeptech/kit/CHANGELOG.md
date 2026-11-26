@@ -1,5 +1,16 @@
 # @zeeptech/kit
 
+## 1.1.0
+
+### Minor Changes
+
+- Add `TextField`, `Checkbox`, `Table` and `Tabs` components (accessible, `--zeep-*` tokens, light/dark and all accents).
+
+### Patch Changes
+
+- Updated dependencies
+  - @zeeptech/ui@1.1.0
+
 ## 1.0.0
 
 ### Major Changes

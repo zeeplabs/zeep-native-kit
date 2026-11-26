@@ -1,5 +1,11 @@
 # @zeeptech/ui
 
+## 1.1.0
+
+### Minor Changes
+
+- Add `TextField`, `Checkbox`, `Table` and `Tabs` components (accessible, `--zeep-*` tokens, light/dark and all accents).
+
 ## 1.0.0
 
 ### Major Changes
