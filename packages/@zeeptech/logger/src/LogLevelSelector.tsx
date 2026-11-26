@@ -5,6 +5,14 @@ import type { LogLevel } from './types';
 
 const PLUGIN = 'plugin:zeep-logger|';
 
+/**
+ * Text color on the active (filled) button. `--zeep-bg` keeps AA contrast (>= 4.5:1)
+ * on every level color in both themes: dark bg on the bright dark-theme tokens, light bg
+ * on the darker light-theme tokens. White failed on dark-theme green/amber (~2:1).
+ * Fallback matches the dark defaults used when rendered outside ZeepProvider.
+ */
+const ACTIVE_TEXT = 'var(--zeep-bg, #0d0d0f)';
+
 export interface LogLevelSelectorProps {
   initialLevel?: LogLevel;
 }
@@ -43,7 +51,7 @@ export function LogLevelSelector({ initialLevel = 'Debug' }: LogLevelSelectorPro
         background: current === level
           ? LOG_LEVEL_COLORS[level]
           : 'var(--zeep-surface, #1a1a1e)',
-        color: current === level ? '#fff' : LOG_LEVEL_COLORS[level],
+        color: current === level ? ACTIVE_TEXT : LOG_LEVEL_COLORS[level],
         cursor: 'pointer',
         opacity: changing ? 0.5 : 1,
         transition: 'all 0.1s',

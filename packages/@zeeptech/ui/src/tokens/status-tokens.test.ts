@@ -30,6 +30,12 @@ describe('status color tokens', () => {
         expect(contrast(color, tokens['--zeep-surface'] as string)).toBeGreaterThanOrEqual(4.5);
         expect(contrast(color, tokens['--zeep-bg'] as string)).toBeGreaterThanOrEqual(4.5);
       });
+
+      // @zeeptech/logger's LogLevelSelector renders `--zeep-bg` text on a filled status
+      // color (active level); keep that pair readable too.
+      it.each(STATUS)('%s is readable under --zeep-bg text (active level button)', token => {
+        expect(contrast(tokens['--zeep-bg'] as string, tokens[token] as string)).toBeGreaterThanOrEqual(4.5);
+      });
     });
   }
 

@@ -104,9 +104,51 @@ jobs:
       - name: Test (all packages)
         run: pnpm -r test
 
+  # The packages declare peer react "^18 || ^19" but develop against 19. Force 18
+  # so that claim is actually exercised (types + tests) instead of assumed.
+  react18:
+    name: React 18 compat (packages)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Pin React 18 (CI-only, not committed)
+        run: |
+          node -e '
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            pkg.pnpm = { ...pkg.pnpm, overrides: {
+              react: "18", "react-dom": "18", "@types/react": "18", "@types/react-dom": "18",
+            } };
+            fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2));
+          '
+          pnpm install --no-frozen-lockfile
+
+      - name: Assert React 18 is what gets tested
+        working-directory: packages/@zeeptech/ui
+        run: node -e 'const v = require("react/package.json").version; console.log("react", v); if (!v.startsWith("18.")) process.exit(1)'
+
+      - name: Build
+        run: pnpm build
+
+      - name: Type check (packages)
+        run: pnpm --filter './packages/**' --if-present type-check
+
+      - name: Test (packages)
+        run: pnpm --filter './packages/**' test
+
   build:
     name: Build (macOS)
-    needs: [rust, rust-linux, typescript]
+    needs: [rust, rust-linux, typescript, react18]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4

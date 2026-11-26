@@ -18,7 +18,9 @@ export const LOG_LEVEL_VALUES: Record<LogLevel, number> = {
 };
 
 export const LOG_LEVEL_COLORS: Record<LogLevel, string> = {
-  Trace: '#999',
+  // Neutral: follows the theme text color so it stays readable on both surfaces
+  // (a fixed gray is ~2.9:1 on the light surface).
+  Trace: 'var(--zeep-text, #999)',
   Debug: 'var(--zeep-info, #3b82f6)',
   Info: 'var(--zeep-success, #22c55e)',
   Warn: 'var(--zeep-warning, #eab308)',
