@@ -123,6 +123,7 @@ zeep_kit::Builder::new()
     .log_dev()                        // dev: stdout + webview, Debug level
     // .log_prod()                    // prod: file rotation, Info level
     .updater("your-public-key-hex")   // enable auto-updates
+    // .ai(false)                     // skip the local AI plugin (on by default in 1.x)
     .install(tauri::Builder::default())
     .run(tauri::generate_context!())
     .expect("error running app");
@@ -513,7 +514,7 @@ function MyApp() {
 |--------|-----------|-------------|------|----------|
 | Logger | `zeep-kit` → `.log_dev()` | `@zeeptech/kit` | auto | `LogViewer`, `LogLevelSelector` |
 | Updater | `zeep-kit` → `.updater(pk)` | `@zeeptech/kit` | auto | `UpdateBanner`, `useUpdater` |
-| AI | `zeep-kit` → auto-enabled | `@zeeptech/kit` | auto | `AIPromptInput`, `useAI` |
+| AI | `zeep-kit` → on by default, `.ai(false)` to opt out | `@zeeptech/kit` | auto | `AIPromptInput`, `useAI` |
 
 ## Release Flow
 
