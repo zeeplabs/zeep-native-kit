@@ -1,4 +1,4 @@
-//! Regression test for issue #11: `LogTarget::Webview` spawned its forwarding
+//! Regression test for issues #11 and #12: `LogTarget::Webview` spawned its forwarding
 //! task with `tokio::spawn` inside the plugin `setup`, which Tauri runs outside
 //! any Tokio runtime, so the app panicked at startup with
 //! "there is no reactor running".
@@ -26,10 +26,11 @@ fn webview_target_sets_up_outside_a_tokio_runtime_and_forwards_logs() {
         let _ = tx.send(event.payload().to_string());
     });
 
-    // `error` on purpose: the initial max level is currently mis-mapped (issue
-    // #12) and drops `info`/`debug` under `development()`. This test is about
-    // the runtime panic and event forwarding, not level handling.
-    log::error!("issue-11-probe");
+    // Issue #12: `development()` is Debug, so the global max level must be Debug
+    // (it used to be read back with the wrong numbering and end up as Warn).
+    assert_eq!(log::max_level(), log::LevelFilter::Debug);
+
+    log::info!("issue-11-probe");
 
     let payload = rx
         .recv_timeout(Duration::from_secs(5))
