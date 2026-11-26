@@ -18,7 +18,7 @@ export function useInjectedStyles(id: string, css: string): void {
 /** Shared focus ring, matches `.zeep-btn:focus-visible`. */
 export const FOCUS_RING = '0 0 0 2px var(--zeep-bg), 0 0 0 4px var(--zeep-accent)';
 
-/** Error color. No dedicated token yet; `--zeep-danger` can override it. */
+/** Error color: `--zeep-danger` (set by ZeepProvider), hex fallback when used outside it. */
 export const DANGER = 'var(--zeep-danger, #ef4444)';
 
 /** Visually hidden but still read by screen readers. */

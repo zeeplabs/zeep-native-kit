@@ -499,7 +499,7 @@ function GalleryContent() {
                     <Button variant="secondary" size="sm" onClick={ai.cancel}>Cancel</Button>
                   )}
                   {ai.error && (
-                    <div style={{ fontSize: 'var(--zeep-font-sm)', color: '#ef4444' }}>Error: {ai.error}</div>
+                    <div style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-danger)' }}>Error: {ai.error}</div>
                   )}
                 </>
               )}
@@ -562,7 +562,7 @@ function GalleryContent() {
                 />
               )}
               {updater.state.status === 'error' && (
-                <div style={{ fontSize: 'var(--zeep-font-sm)', color: '#ef4444' }}>
+                <div style={{ fontSize: 'var(--zeep-font-sm)', color: 'var(--zeep-danger)' }}>
                   Error: {updater.state.error}
                 </div>
               )}

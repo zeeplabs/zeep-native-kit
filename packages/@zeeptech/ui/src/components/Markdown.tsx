@@ -53,7 +53,7 @@ const HLJS_CSS = `
 .hljs-attr, .hljs-attribute { color: var(--zeep-accent-light); }
 .hljs-symbol, .hljs-bullet { color: #c4b5fd; }
 .hljs-meta { color: var(--zeep-text-muted); }
-.hljs-deletion { background: rgba(239,68,68,0.2); }
+.hljs-deletion { background: color-mix(in srgb, var(--zeep-danger, #ef4444) 20%, transparent); }
 .hljs-addition { background: rgba(34,197,94,0.2); }
 .hljs-emphasis { font-style: italic; }
 .hljs-strong { font-weight: bold; }

@@ -6,7 +6,7 @@ describe('StatusDot', () => {
   it('applies the color for the given status', () => {
     render(<StatusDot status="busy" />);
     const dot = screen.getByRole('img', { name: 'Status: busy' });
-    expect(dot.style.backgroundColor).toBe('rgb(239, 68, 68)');
+    expect(dot.style.backgroundColor).toBe('var(--zeep-danger, #ef4444)');
   });
 
   it('uses an explicit color override when provided', () => {
