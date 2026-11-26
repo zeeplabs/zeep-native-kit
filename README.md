@@ -123,6 +123,7 @@ zeep_kit::Builder::new()
     .log_dev()                        // dev: stdout + webview, Debug level
     // .log_prod()                    // prod: file rotation, Info level
     .updater("your-public-key-hex")   // enable auto-updates
+    // .ai(false)                     // skip the local AI plugin (on by default in 1.x)
     .install(tauri::Builder::default())
     .run(tauri::generate_context!())
     .expect("error running app");
@@ -326,6 +327,8 @@ zeep_ai::Builder::build()
 
 Commands: `ai_detect_providers` → `Vec<DetectedProvider>`, `ai_run`/`ai_run_stream`/`ai_cancel`.
 
+With `zeep_kit::Builder::install()` the AI plugin is registered **by default** in 1.x. Apps that don't use it can call `.ai(false)` to skip registering its commands. The default will become `false` in the next major version, so call `.ai(true)` explicitly if you rely on it.
+
 **Frontend:**
 ```tsx
 import { useAI, AIProviderPicker, AIPromptInput, AIResponseStream } from '@zeeptech/kit';
@@ -517,7 +520,7 @@ function MyApp() {
 |--------|-----------|-------------|------|----------|
 | Logger | `zeep-kit` → `.log_dev()` | `@zeeptech/kit` | auto | `LogViewer`, `LogLevelSelector` |
 | Updater | `zeep-kit` → `.updater(pk)` | `@zeeptech/kit` | auto | `UpdateBanner`, `useUpdater` |
-| AI | `zeep-kit` → auto-enabled | `@zeeptech/kit` | auto | `AIPromptInput`, `useAI` |
+| AI | `zeep-kit` → on by default, `.ai(false)` to opt out | `@zeeptech/kit` | auto | `AIPromptInput`, `useAI` |
 
 ## Release Flow
 
