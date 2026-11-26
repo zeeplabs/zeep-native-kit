@@ -46,9 +46,12 @@ mod tests {
 
     #[test]
     fn get_version_parses_first_line() {
-        // `sh --version` prints a banner on the first line on every platform we support.
-        let version = get_version("sh");
-        assert!(version.is_some());
+        // Not `sh`: on Debian/Ubuntu `sh` is dash, which has no `--version` flag.
+        // Cargo exports its own path as `CARGO` to every test run, and
+        // `cargo --version` prints `cargo X.Y.Z (...)` on the first line everywhere.
+        let cargo = std::env::var("CARGO").expect("CARGO is set by cargo test");
+        let version = get_version(&cargo).expect("cargo --version prints a banner");
+        assert!(version.starts_with("cargo "), "unexpected banner: {version}");
     }
 
     #[test]

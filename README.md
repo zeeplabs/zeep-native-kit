@@ -213,10 +213,14 @@ Secure credential storage via the `keyring` crate (macOS Keychain, Windows Crede
 use zeep_core::keychain::Keychain;
 
 let kc = Keychain::new("dev.zeep.myapp");
-kc.set("api-token", "sk-xxx")?;
-let token: Option<String> = kc.get("api-token")?;
-kc.delete("api-token")?;
+kc.set_secret("api-token", "sk-xxx")?;
+let token: Option<String> = kc.get_secret("api-token")?;
+kc.delete_secret("api-token")?;
 ```
+
+Backends are enabled per target: `apple-native` (macOS/iOS), `windows-native` (Windows) and `sync-secret-service` + `crypto-rust` (Linux).
+
+**Linux:** secrets are stored through the Secret Service D-Bus API, so the user session needs a running provider (GNOME Keyring, KWallet, KeePassXC). Without one, `keychain_*` commands return an error instead of silently losing data. Building requires `libdbus-1-dev` and `pkg-config`.
 
 ### Shell (`zeep-core`)
 
