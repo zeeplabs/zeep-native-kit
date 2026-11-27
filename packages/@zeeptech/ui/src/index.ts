@@ -13,3 +13,4 @@ export * from './components/TextField.tsx';
 export * from './components/Checkbox.tsx';
 export * from './components/Table.tsx';
 export * from './components/Tabs.tsx';
+export * from './components/Stepper.tsx';
