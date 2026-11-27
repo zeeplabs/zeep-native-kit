@@ -1,5 +1,12 @@
 # @zeeptech/kit
 
+## 1.1.2
+
+### Patch Changes
+
+- Updated dependencies [37fd469]
+  - @zeeptech/logger@1.0.2
+
 ## 1.1.1
 
 ### Patch Changes
