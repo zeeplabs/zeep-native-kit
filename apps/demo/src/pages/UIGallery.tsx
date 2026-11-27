@@ -17,6 +17,7 @@ import {
   Checkbox,
   Table,
   Tabs,
+  Stepper,
 } from '@zeeptech/ui';
 import type { AccentTheme, TableColumn, Theme } from '@zeeptech/ui';
 import { prefsGet, prefsSet, keychainGet, keychainSet, shellWhich } from '@zeeptech/core';
@@ -119,6 +120,7 @@ function chipActive(active: boolean): CSSProperties {
 function GalleryContent() {
   const { theme: resolvedTheme, accentTheme, setTheme, setAccentTheme } = useZeep();
   const toast = useToast();
+  const [step, setStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState('Zeep');
   const [prefsValue, setPrefsValue] = useState('');
   const [prefsResult, setPrefsResult] = useState<string | null>(null);
@@ -398,6 +400,37 @@ function GalleryContent() {
               { id: 'audit', label: 'Auditoria', content: null, disabled: true },
             ]}
           />
+        </div>
+
+        {/* ── Stepper ── */}
+        <div style={section}>
+          <div style={sectionTitle}>Stepper</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <Stepper
+              aria-label="Progresso do onboarding"
+              current={step}
+              onStepClick={setStep}
+              steps={[
+                { id: 'account', label: 'Conta', description: 'Dados de acesso' },
+                { id: 'tools', label: 'Ferramentas', description: 'Softwares por SO' },
+                { id: 'review', label: 'Revisão' },
+              ]}
+            />
+            <div style={row}>
+              <Button variant="secondary" size="sm" onClick={() => { setStep(s => Math.max(0, s - 1)); }}>Voltar</Button>
+              <Button size="sm" onClick={() => { setStep(s => Math.min(3, s + 1)); }}>Avançar</Button>
+            </div>
+            <Stepper
+              aria-label="Exemplo vertical com erro"
+              orientation="vertical"
+              current={1}
+              steps={[
+                { id: 'a', label: 'Perfil', description: 'Concluído' },
+                { id: 'b', label: 'Acessos', description: 'Campo obrigatório', status: 'error' },
+                { id: 'c', label: 'Confirmação' },
+              ]}
+            />
+          </div>
         </div>
 
         {/* ── Toast ── */}
