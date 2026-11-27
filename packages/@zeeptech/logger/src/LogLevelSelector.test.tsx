@@ -27,4 +27,12 @@ describe('LogLevelSelector', () => {
     expect(infoBtn).toBeDefined();
     expect(infoBtn!.style.background).not.toBe('');
   });
+
+  it('uses a theme-aware text color (not white) on the active button', async () => {
+    const { LogLevelSelector } = await import('./LogLevelSelector.tsx');
+    const { container } = render(<LogLevelSelector initialLevel="Warn" />);
+    const warn = Array.from(container.querySelectorAll('button')).find(b => b.textContent === 'Warn');
+    expect(warn!.style.color).toContain('--zeep-bg');
+    expect(warn!.style.color).not.toBe('#fff');
+  });
 });
