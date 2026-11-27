@@ -1,6 +1,6 @@
 {
   "name": "@zeeptech/logger",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Log viewer and controls for zeep-native-kit apps",
   "type": "module",
   "license": "MIT OR Apache-2.0",
